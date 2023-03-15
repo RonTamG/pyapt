@@ -1,0 +1,38 @@
+Package: bart-cuda
+Version: 0.6.00-1
+Installed-Size: 1271
+Maintainer: Debian Med Packaging Team <debian-med-packaging@lists.alioth.debian.org>
+Architecture: amd64
+Replaces: bart
+Provides: bart
+Depends: libblas3 | libblas.so.3, libc6 (>= 2.29), libcublas11, libcudart11.0, libcufft10, libfftw3-single3 (>= 3.3.5), libgomp1 (>= 4.9), liblapacke (>= 3.9.0), libpng16-16 (>= 1.6.2-1), libstdc++6 (>= 4.1.1)
+Suggests: octave-bart
+Conflicts: bart
+Description: tools for computational magnetic resonance imaging
+Homepage: https://mrirecon.github.io/bart/
+Description-md5: c2a1ea23801f1b5aa543b58d70abf3c4
+Section: contrib/science
+Priority: optional
+Filename: pool/contrib/b/bart-cuda/bart-cuda_0.6.00-1_amd64.deb
+Size: 464532
+MD5sum: a9926e7b95443973d8668bb510de5c53
+SHA256: 629f4269fbe54db3ec0f57213416557b3cb4ac2cde266fd9285729353575b43f
+
+Package: basilisk2
+Source: basilisk2 (0.9.20180101-1)
+Version: 0.9.20180101-1+b2
+Installed-Size: 3647
+Maintainer: Jonas Smedegaard <dr@jones.dk>
+Architecture: amd64
+Depends: libc6 (>= 2.17), libgcc-s1 (>= 3.0), libglib2.0-0 (>= 2.12.0), libgtk2.0-0 (>= 2.8.0), libsdl1.2debian (>= 1.2.11), libstdc++6 (>= 9), libtinyxml2-8 (>= 8.0.0)
+Description: 68k Macintosh emulator
+Homepage: http://basilisk.cebix.net/
+Description-md5: e83e142cb49b01600e0e123d5566127b
+Tag: interface::graphical, interface::x11, role::program, uitoolkit::gtk,
+ uitoolkit::sdl, x11::application
+Section: contrib/otherosfs
+Priority: optional
+Filename: pool/contrib/b/basilisk2/basilisk2_0.9.20180101-1+b2_amd64.deb
+Size: 758484
+MD5sum: 0565034cd77e4b1d905681417d68ccb8
+SHA256: c664a3ddd2295c78681fa1232a38a8e5c15272648230f26b73636b85e008df0f

@@ -87,3 +87,20 @@ def test_url_into_saved_file_name():
     assert result == expected_names
 
 
+def test_generate_index_dictionary():
+    expected_packages = ['genius', 'genius-common',
+                         'genius-dev', 'gnome-genius', 'bart-cuda', 'basilisk2']
+    test_indexes = ['main_packages.txt', 'contrib_packages.txt']
+
+    result_packages = {}
+
+    for path in test_indexes:
+        with open(os.path.join('tests', 'resources', path), 'r') as index_file:
+            data = index_file.read()
+        result_packages.update(generate_index_dictionary(data))
+
+    result = [pack in result_packages for pack in expected_packages]
+    assert result != []
+    assert all(result)
+
+

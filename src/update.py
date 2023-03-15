@@ -1,4 +1,7 @@
 import os.path
+import logging
+
+
 def parse_sources_list(sources_list):
     '''
     parse apt sources list into parts.
@@ -38,5 +41,36 @@ def url_into_saved_file_name(url):
     the names of the files are derived from the urls used to retrieve them.
     '''
     return url.replace('http://', '').replace('/', '_')
+
+
+def generate_index_dictionary(index_data):
+    '''
+    create a dictionary of the package index from an index file's data
+
+    original file usually named Packages.xz
+    '''
+    index = {}
+    for data in index_data.strip().split('\n\n'):
+        values = {}
+        name = ''
+        for line in data.splitlines():
+            if line.startswith(' ') and name in values:
+                values[name] += line
+            else:
+                try:
+                    name, value = line.split(': ', maxsplit=1)
+                except ValueError:
+                    logging.warning(
+                        f'failed to parse: "{line}" in package data:\n{data}')
+
+                name = name.replace('-', '_').strip()
+                values[name] = value
+
+        try:
+            index[values['Package']] = values
+        except KeyError:
+            logging.warning(f'failed to parse: "{data}" as package')
+
+    return index
 
 
