@@ -134,3 +134,11 @@ def add_virtual_indexes(index):
     return index
 
 
+def add_apt_source_field(package_index, source):
+    '''
+    add the Apt-Source field to every package in the given package index
+    '''
+    for package in package_index.values():
+        package['Apt-Source'] = source
+
+    return package_index

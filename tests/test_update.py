@@ -145,3 +145,11 @@ def test_get_apt_sources():
     assert result == expected
 
 
+def test_add_apt_source_field():
+    with open(os.path.join('tests', 'resources', 'contrib_packages.txt'), 'r') as index_file:
+        data = index_file.read()
+    index = generate_index_dictionary(data)
+
+    result = add_apt_source_field(
+        index, source='http://deb.debian.org/debian bullseye/main amd64')
+    assert all(['Apt-Source' in package for package in result.values()])
