@@ -142,6 +142,8 @@ def main():
     write_install_script(filenames)
     tar_dir(TEMP_FOLDER_NAME, f'{name}.tar.gz')
 
+    shutil.rmtree(TEMP_FOLDER_NAME)
+
 
 if __name__ == '__main__':
     main()
