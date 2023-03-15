@@ -15,7 +15,6 @@ from src.packages import *
 from src.install import *
 
 DEFAULT_ARCHITECTURE = 'amd64'
-TEMP_FOLDER_NAME = 'temp_apt'
 
 
 def get(url):
@@ -36,12 +35,12 @@ def tar_dir(path, name):
                 tar.add(os.path.join(root, f))
 
 
-def save_update_file(name, data):
+def save_update_file(name, data, temp_folder):
     '''
     save a file to a subdirectory 'update' in the temp directory 
     '''
     # create directory if it doesn't exist
-    update_directory = os.path.join(TEMP_FOLDER_NAME, 'update')
+    update_directory = os.path.join(temp_folder, 'update')
     Path(update_directory).mkdir(parents=True, exist_ok=True)
 
     path = os.path.join(update_directory, name)
@@ -51,12 +50,12 @@ def save_update_file(name, data):
     return path
 
 
-def save_package_file(name, data):
+def save_package_file(name, data, temp_folder):
     '''
     save a file to a subdirectory 'packages' in the temp directory 
     '''
     # create directory if it doesn't exist
-    update_directory = os.path.join(TEMP_FOLDER_NAME, 'packages')
+    update_directory = os.path.join(temp_folder, 'packages')
     Path(update_directory).mkdir(parents=True, exist_ok=True)
 
     path = os.path.join(update_directory, name)
@@ -76,7 +75,7 @@ def read_lzma(path):
     return lzma.decompress(data).decode('utf-8')
 
 
-def apt_update(sources_list_path):
+def apt_update(sources_list_path, temp_folder):
     '''
     retrieve the required files and create an index of the packages
     '''
@@ -91,7 +90,7 @@ def apt_update(sources_list_path):
     # download index files and save them
     filenames = (url_into_saved_file_name(url) for url in urls)
     downloads = (get(url) for url in urls)
-    saved = (save_update_file(name, data)
+    saved = (save_update_file(name, data, temp_folder)
              for name, data in zip(filenames, downloads))
 
     # create an index dictionary from the index files
@@ -113,7 +112,7 @@ def apt_update(sources_list_path):
     return full_index
 
 
-def download_package(name, index, with_dependencies=True, with_recommended=True, with_pre_dependencies=True):
+def download_package(name, index, temp_folder, with_dependencies=True, with_recommended=True, with_pre_dependencies=True):
     '''
     download a package with all it's dependencies
     '''
@@ -123,15 +122,15 @@ def download_package(name, index, with_dependencies=True, with_recommended=True,
     urls = [get_package_url(name, index) for name in packages]
     filenames = (os.path.basename(url) for url in urls)
     downloads = (get(url) for url in urls)
-    save = (save_package_file(name, data)
+    save = (save_package_file(name, data, temp_folder)
             for name, data in zip(filenames, downloads))
 
     return list(save)
 
 
-def write_install_script(filenames):
+def write_install_script(filenames, temp_folder):
     data = create_install_script(filenames)
-    with open(f'{TEMP_FOLDER_NAME}/install.sh', 'w', newline='\n') as install:
+    with open(f'{temp_folder}/install.sh', 'w', newline='\n') as install:
         install.write(data)
 
 def create_parser():
@@ -139,21 +138,23 @@ def create_parser():
                     prog='pyapt',
                     description='A basic python implementation of apt which allows downloading packages with all dependencies on non Linux machines')
     parser.add_argument('packages', nargs='+', help='list of packages to download')
+    parser.add_argument('--temp-folder', default='temp_apt', help='the folder to download update index and packages into')
 
     return parser
 
 def main():
     args = create_parser().parse_args()
+    temp_folder = args.temp_folder
 
-    index = apt_update('sources.list')
+    index = apt_update('sources.list', temp_folder)
 
     for name in args.packages:
-        filenames = download_package(name, index)
-        write_install_script(filenames)
-        tar_dir(TEMP_FOLDER_NAME, f'{name}.tar.gz')
+        filenames = download_package(name, index, temp_folder)
+        write_install_script(filenames, temp_folder)
+        tar_dir(temp_folder, f'{name}.tar.gz')
         
-        shutil.rmtree(os.path.join(TEMP_FOLDER_NAME, 'packages'))
-        os.remove(os.path.join(TEMP_FOLDER_NAME, 'install.sh'))
+        shutil.rmtree(os.path.join(temp_folder, 'packages'))
+        os.remove(os.path.join(temp_folder, 'install.sh'))
 
 
 
