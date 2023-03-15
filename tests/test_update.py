@@ -131,3 +131,17 @@ def test_add_virtual_indexes():
     assert all(result)
 
 
+def test_get_apt_sources():
+    urls = ['http://deb.debian.org/debian/dists/bullseye/main/binary-amd64/Packages.xz',
+            'http://security.debian.org/debian-security/dists/bullseye-security/main/binary-amd64/Packages.xz'
+            ]
+
+    expected = ['http://deb.debian.org/debian bullseye/main amd64',
+                'http://security.debian.org/debian-security bullseye-security/main amd64'
+                ]
+
+    result = [get_apt_sources(url) for url in urls]
+
+    assert result == expected
+
+

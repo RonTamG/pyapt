@@ -1,5 +1,6 @@
 import os.path
 import logging
+import re
 
 
 def parse_sources_list(sources_list):
