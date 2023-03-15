@@ -162,6 +162,9 @@ def create_parser():
     parser.add_argument('--sources-list', default='./sources.list', help='the sources list to use in order to download the packages')
     parser.add_argument('--temp-folder', default='temp_apt', help='the folder to download update index and packages into')
     parser.add_argument('--keep', action='store_true', help='don\'t remove temp directory at the end of package download')
+    parser.add_argument('--no-recommended', action='store_true', help='don\'t download recommended packages')
+    parser.add_argument('--no-dependencies', action='store_true', help='don\'t download dependency packages')
+    parser.add_argument('--no-pre-dependencies', action='store_true', help='don\'t download pre-dependency packages')
 
     return parser
 
@@ -169,11 +172,14 @@ def main():
     args = create_parser().parse_args()
     temp_folder = args.temp_folder
     sources_list = args.sources_list
+    with_recommended = not args.no_recommended
+    with_dependencies = not args.no_dependencies
+    with_pre_dependencies = not args.no_pre_dependencies
 
     index = apt_update(sources_list, temp_folder)
 
     for name in args.packages:
-        filenames = download_package(name, index, temp_folder)
+        filenames = download_package(name, index, temp_folder, with_dependencies, with_recommended, with_pre_dependencies)
         write_install_script(filenames, temp_folder)
         tar_dir(temp_folder, f'{name}.tar.gz')
         
