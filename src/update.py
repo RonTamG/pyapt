@@ -1,3 +1,4 @@
+import os.path
 def parse_sources_list(sources_list):
     '''
     parse apt sources list into parts.
@@ -11,3 +12,12 @@ def parse_sources_list(sources_list):
     parts = [line.strip().split() for line in data]
 
     return parts
+
+
+def get_release_urls(parts):
+    '''
+    generate the list of InRelease files to fetch from the repository
+    '''
+    return [os.path.join(url, 'dists', dist, 'InRelease') for (_, url, dist, *components) in parts]
+
+
