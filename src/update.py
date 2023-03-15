@@ -21,3 +21,14 @@ def get_release_urls(parts):
     return [os.path.join(url, 'dists', dist, 'InRelease') for (_, url, dist, *components) in parts]
 
 
+def get_index_urls(parts, architecture):
+    '''
+    generate the list of Package files to fetch from the repository
+    '''
+    indexes = []
+    for (_, url, dist, *components) in parts:
+        indexes.extend([os.path.join(url, 'dists', dist, component, 'binary-' +
+                       architecture, 'Packages.xz') for component in components])
+    return indexes
+
+
