@@ -5,6 +5,7 @@ import lzma
 import pickle
 import re
 import tarfile
+import argparse
 
 import urllib.request
 from pathlib import Path
@@ -133,16 +134,28 @@ def write_install_script(filenames):
     with open(f'{TEMP_FOLDER_NAME}/install.sh', 'w', newline='\n') as install:
         install.write(data)
 
+def create_parser():
+    parser = argparse.ArgumentParser(
+                    prog='pyapt',
+                    description='A basic python implementation of apt which allows downloading packages with all dependencies on non Linux machines')
+    parser.add_argument('packages', nargs='+', help='list of packages to download')
+
+    return parser
 
 def main():
+    args = create_parser().parse_args()
+
     index = apt_update('sources.list')
-    name = 'git'
 
-    filenames = download_package(name, index)
-    write_install_script(filenames)
-    tar_dir(TEMP_FOLDER_NAME, f'{name}.tar.gz')
+    for name in args.packages:
+        filenames = download_package(name, index)
+        write_install_script(filenames)
+        tar_dir(TEMP_FOLDER_NAME, f'{name}.tar.gz')
+        
+        shutil.rmtree(os.path.join(TEMP_FOLDER_NAME, 'packages'))
+        os.remove(os.path.join(TEMP_FOLDER_NAME, 'install.sh'))
 
-    shutil.rmtree(TEMP_FOLDER_NAME)
+
 
 
 if __name__ == '__main__':
