@@ -6,6 +6,7 @@ import pickle
 import re
 import tarfile
 import argparse
+import sys
 
 import urllib.request
 from pathlib import Path
@@ -16,6 +17,31 @@ from src.packages import *
 from src.install import *
 
 DEFAULT_ARCHITECTURE = 'amd64'
+
+def progressbar(it, count, prefix='', size=60, out=sys.stdout): # Python3.6+
+    '''
+    displays a progress bar for an iterator
+
+    modified from the following answer to work with generators without listing them
+    and to provide the value of the last item as a postfix
+    https://stackoverflow.com/a/34482761
+    '''
+    def print_current_line(line):
+        print(line, end='\r', file=out, flush=True)
+
+    def show(current, item=''):
+        filled = int(size * current / count)
+        line = f"{prefix}[{'#' * filled}{('.' * (size - filled))}] {current}/{count} [{item}]"
+        print_current_line(line)
+        return len(line)
+
+    prev_len = show(0)
+    for i, item in enumerate(it):
+        print_current_line(' ' * prev_len)
+        prev_len = show(i + 1, str(item))
+        yield item
+
+    print("\n", flush=True, file=out)
 
 
 def is_downloaded(filename, directory):
@@ -106,6 +132,7 @@ def apt_update(sources_list_path, temp_folder):
         downloads = (get(url) for url in urls_to_download)
         saved = (save_update_file(name, data, temp_folder)
                  for name, data in zip(filenames, downloads))
+        saved = progressbar(saved, len(urls_to_download), prefix='Update: ')
 
     # create an index dictionary from the index files
     index_files = (path for path in saved if path.endswith('Packages.xz'))
@@ -145,6 +172,7 @@ def download_package(name, index, temp_folder, with_dependencies=True, with_reco
         downloads = (get(url) for url in urls_to_download)
         saved = (save_package_file(name, data, temp_folder)
                 for name, data in zip(filenames, downloads))
+        saved = progressbar(saved, len(urls_to_download), prefix=f'{name}: ')
 
     return list(saved)
 
@@ -189,6 +217,7 @@ def main():
             os.remove(os.path.join(temp_folder, 'install.sh'))
     if not (args.keep or args.keep_update):
         shutil.rmtree(temp_folder)
+
 
 if __name__ == '__main__':
     main()
