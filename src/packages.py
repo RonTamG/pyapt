@@ -70,3 +70,10 @@ def get_package_dependencies(name, packages, with_dependencies=True, with_recomm
     return dependencies
 
 
+def get_package_url(name, index):
+    '''
+    return the url to request in order to download the package
+    '''
+    URI = 0
+    package = index[name]
+    return os.path.join(package['Apt-Source'].split()[URI], package['Filename'])
