@@ -104,3 +104,16 @@ def test_generate_index_dictionary():
     assert all(result)
 
 
+def test_generate_index_dictionary_with_multiline_fields():
+    expected = 'interface::graphical, interface::x11, role::program, uitoolkit::gtk, uitoolkit::sdl, x11::application'
+
+    with open(os.path.join('tests', 'resources', 'contrib_packages.txt'), 'r') as index_file:
+        data = index_file.read()
+
+    index = generate_index_dictionary(data)
+
+    result = index['basilisk2']['Tag']
+
+    assert result == expected
+
+
