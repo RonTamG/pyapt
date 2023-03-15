@@ -32,3 +32,11 @@ def get_index_urls(parts, architecture):
     return indexes
 
 
+def url_into_saved_file_name(url):
+    '''
+    the files from an apt update get saved to /var/lib/apt/lists.
+    the names of the files are derived from the urls used to retrieve them.
+    '''
+    return url.replace('http://', '').replace('/', '_')
+
+
