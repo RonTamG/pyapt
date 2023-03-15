@@ -9,12 +9,20 @@ import argparse
 
 import urllib.request
 from pathlib import Path
+from glob import glob
 
 from src.update import *
 from src.packages import *
 from src.install import *
 
 DEFAULT_ARCHITECTURE = 'amd64'
+
+
+def is_downloaded(filename, directory):
+    '''
+    check if file is in directory
+    '''
+    return glob(os.path.join(directory, '**', filename)) != []
 
 
 def get(url):
@@ -88,10 +96,16 @@ def apt_update(sources_list_path, temp_folder):
     urls.extend(get_index_urls(parts, architecture=DEFAULT_ARCHITECTURE))
 
     # download index files and save them
-    filenames = (url_into_saved_file_name(url) for url in urls)
-    downloads = (get(url) for url in urls)
-    saved = (save_update_file(name, data, temp_folder)
-             for name, data in zip(filenames, downloads))
+    url_filenames = [(url, url_into_saved_file_name(url)) for url in urls]
+    url_filenames_to_download = [(url, name) for url, name in url_filenames if not is_downloaded(name, temp_folder)]
+    if len(url_filenames_to_download) == 0:
+        _, names = zip(*url_filenames)
+        saved = [os.path.join(temp_folder, 'update', name) for name in names]
+    else:
+        urls_to_download, filenames = zip(*url_filenames_to_download)
+        downloads = (get(url) for url in urls_to_download)
+        saved = (save_update_file(name, data, temp_folder)
+                 for name, data in zip(filenames, downloads))
 
     # create an index dictionary from the index files
     index_files = (path for path in saved if path.endswith('Packages.xz'))
@@ -120,12 +134,19 @@ def download_package(name, index, temp_folder, with_dependencies=True, with_reco
         name, index, with_dependencies, with_recommended, with_pre_dependencies)
 
     urls = [get_package_url(name, index) for name in packages]
-    filenames = (os.path.basename(url) for url in urls)
-    downloads = (get(url) for url in urls)
-    save = (save_package_file(name, data, temp_folder)
-            for name, data in zip(filenames, downloads))
 
-    return list(save)
+    url_filenames = [(url, os.path.basename(url)) for url in urls]
+    url_filenames_to_download = [(url, name) for url, name in url_filenames if not is_downloaded(name, temp_folder)]
+    if len(url_filenames_to_download) == 0:
+        _, names = zip(*url_filenames)
+        saved = [os.path.join(temp_folder, 'packages', name) for name in names]
+    else:
+        urls_to_download, filenames = zip(*url_filenames_to_download)
+        downloads = (get(url) for url in urls_to_download)
+        saved = (save_package_file(name, data, temp_folder)
+                for name, data in zip(filenames, downloads))
+
+    return list(saved)
 
 
 def write_install_script(filenames, temp_folder):
@@ -140,6 +161,7 @@ def create_parser():
     parser.add_argument('packages', nargs='+', help='list of packages to download')
     parser.add_argument('--sources-list', default='./sources.list', help='the sources list to use in order to download the packages')
     parser.add_argument('--temp-folder', default='temp_apt', help='the folder to download update index and packages into')
+    parser.add_argument('--keep', action='store_true', help='don\'t remove temp directory at the end of package download')
 
     return parser
 
@@ -155,10 +177,8 @@ def main():
         write_install_script(filenames, temp_folder)
         tar_dir(temp_folder, f'{name}.tar.gz')
         
-        shutil.rmtree(os.path.join(temp_folder, 'packages'))
-        os.remove(os.path.join(temp_folder, 'install.sh'))
-
-
+        if not args.keep:
+            shutil.rmtree(temp_folder)
 
 
 if __name__ == '__main__':
