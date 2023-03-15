@@ -1,4 +1,4 @@
-import os.path
+import posixpath
 import logging
 import re
 
@@ -22,7 +22,7 @@ def get_release_urls(parts):
     '''
     generate the list of InRelease files to fetch from the repository
     '''
-    return [os.path.join(url, 'dists', dist, 'InRelease') for (_, url, dist, *components) in parts]
+    return [posixpath.join(url, 'dists', dist, 'InRelease') for (_, url, dist, *components) in parts]
 
 
 def get_index_urls(parts, architecture):
@@ -31,7 +31,7 @@ def get_index_urls(parts, architecture):
     '''
     indexes = []
     for (_, url, dist, *components) in parts:
-        indexes.extend([os.path.join(url, 'dists', dist, component, 'binary-' +
+        indexes.extend([posixpath.join(url, 'dists', dist, component, 'binary-' +
                        architecture, 'Packages.xz') for component in components])
     return indexes
 

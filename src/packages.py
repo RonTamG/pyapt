@@ -1,5 +1,6 @@
 import logging
 import os.path
+import posixpath
 
 from src.update import get_index_name
 
@@ -76,4 +77,4 @@ def get_package_url(name, index):
     '''
     URI = 0
     package = index[name]
-    return os.path.join(package['Apt-Source'].split()[URI], package['Filename'])
+    return posixpath.join(package['Apt-Source'].split()[URI], package['Filename'])
