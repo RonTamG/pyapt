@@ -161,7 +161,8 @@ def create_parser():
     parser.add_argument('packages', nargs='+', help='list of packages to download')
     parser.add_argument('--sources-list', default='./sources.list', help='the sources list to use in order to download the packages')
     parser.add_argument('--temp-folder', default='temp_apt', help='the folder to download update index and packages into')
-    parser.add_argument('--keep', action='store_true', help='don\'t remove temp directory at the end of package download')
+    parser.add_argument('--keep', action='store_true', help='don\'t remove temp directory at the end of all package downloads')
+    parser.add_argument('--keep-update', action='store_true', help='don\'t remove temp update directory at the end of all package downloads')
     parser.add_argument('--no-recommended', action='store_true', help='don\'t download recommended packages')
     parser.add_argument('--no-dependencies', action='store_true', help='don\'t download dependency packages')
     parser.add_argument('--no-pre-dependencies', action='store_true', help='don\'t download pre-dependency packages')
@@ -184,8 +185,10 @@ def main():
         tar_dir(temp_folder, f'{name}.tar.gz')
         
         if not args.keep:
-            shutil.rmtree(temp_folder)
-
+            shutil.rmtree(os.path.join(temp_folder, 'packages'))
+            os.remove(os.path.join(temp_folder, 'install.sh'))
+    if not (args.keep or args.keep_update):
+        shutil.rmtree(temp_folder)
 
 if __name__ == '__main__':
     main()
