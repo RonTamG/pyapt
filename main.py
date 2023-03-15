@@ -138,6 +138,7 @@ def create_parser():
                     prog='pyapt',
                     description='A basic python implementation of apt which allows downloading packages with all dependencies on non Linux machines')
     parser.add_argument('packages', nargs='+', help='list of packages to download')
+    parser.add_argument('--sources-list', default='./sources.list', help='the sources list to use in order to download the packages')
     parser.add_argument('--temp-folder', default='temp_apt', help='the folder to download update index and packages into')
 
     return parser
@@ -145,8 +146,9 @@ def create_parser():
 def main():
     args = create_parser().parse_args()
     temp_folder = args.temp_folder
+    sources_list = args.sources_list
 
-    index = apt_update('sources.list', temp_folder)
+    index = apt_update(sources_list, temp_folder)
 
     for name in args.packages:
         filenames = download_package(name, index, temp_folder)
