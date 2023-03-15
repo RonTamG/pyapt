@@ -117,3 +117,17 @@ def test_generate_index_dictionary_with_multiline_fields():
     assert result == expected
 
 
+def test_add_virtual_indexes():
+    expected_packages = ['basilisk2', 'bart-cuda', 'bart']
+
+    with open(os.path.join('tests', 'resources', 'contrib_packages.txt'), 'r') as index_file:
+        data = index_file.read()
+
+    index = generate_index_dictionary(data)
+    result_packages = add_virtual_indexes(index)
+
+    result = [pack in result_packages for pack in expected_packages]
+    assert result != []
+    assert all(result)
+
+

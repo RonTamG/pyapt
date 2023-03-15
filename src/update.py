@@ -74,3 +74,62 @@ def generate_index_dictionary(index_data):
     return index
 
 
+def get_apt_sources(url):
+    '''
+    return the apt sources of a given index package url
+    '''
+    pattern = re.compile(
+        '(?P<url>\w+:\/\/.+?\/.+)\/dists\/(?P<dist>.+?)\/(?P<component>.+?)\/binary-(?P<arch>.+?)\/Packages.xz')
+    result = re.match(pattern, url)
+
+    uri, dist, component, architecture = result.groups()
+
+    return f'{uri} {dist}/{component} {architecture}'
+
+
+def get_index_name(index):
+    '''
+    returns the name of the index without any version or architecture infromation
+    '''
+    # remove version
+    name = index.split()[0].strip()
+    # remove architecture
+    if ':' in name:
+        (name, architecture) = name.split(':')
+        if architecture != 'any':
+            logging.warning(
+                f'error processing package {name}: no support for architecture {architecture}')
+
+    return name
+
+
+def get_provides_list(index):
+    '''
+    this list includes the names of virtual packages that point to this one
+    '''
+    if 'Provides' in index:
+        return index['Provides'].split(',')
+    else:
+        return []
+
+
+def add_virtual_indexes(index):
+    '''
+    add virtual packages to an index
+
+    modifies the given index.
+    '''
+    virtual_packages = {}
+
+    for values in index.values():
+        provides = get_provides_list(values)
+        if 'Provides' in values:
+            del values['Provides']
+        for virtual_index in provides:
+            virtual_packages[get_index_name(virtual_index)] = values
+
+    index.update(virtual_packages)
+
+    return index
+
+
