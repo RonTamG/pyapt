@@ -165,12 +165,12 @@ def apt_update(sources_list_path, temp_folder):
     return full_index
 
 
-def download_package(name, index, temp_folder, with_dependencies=True, with_recommended=True, with_pre_dependencies=True):
+def download_package(name, index, temp_folder, with_dependencies=True, with_recommended=True, with_pre_dependencies=True, with_required=False):
     '''
     download a package with all it's dependencies
     '''
     packages = get_package_dependencies(
-        name, index, with_dependencies, with_recommended, with_pre_dependencies)
+        name, index, with_dependencies, with_recommended, with_pre_dependencies, with_required)
 
     urls = [get_package_url(name, index) for name in packages]
 
@@ -206,6 +206,7 @@ def create_parser():
     parser.add_argument('--no-recommended', action='store_true', help='don\'t download recommended packages')
     parser.add_argument('--no-dependencies', action='store_true', help='don\'t download dependency packages')
     parser.add_argument('--no-pre-dependencies', action='store_true', help='don\'t download pre-dependency packages')
+    parser.add_argument('--with-required', action='store_true', help='do download packages with priority required')
 
     return parser
 
@@ -216,11 +217,12 @@ def main():
     with_recommended = not args.no_recommended
     with_dependencies = not args.no_dependencies
     with_pre_dependencies = not args.no_pre_dependencies
+    with_required = args.with_required
 
     index = apt_update(sources_list, temp_folder)
 
     for name in args.packages:
-        filenames = download_package(name, index, temp_folder, with_dependencies, with_recommended, with_pre_dependencies)
+        filenames = download_package(name, index, temp_folder, with_dependencies, with_recommended, with_pre_dependencies, with_required)
         write_install_script(filenames, temp_folder)
         tar_dir(temp_folder, f'{name}.tar.gz')
         
