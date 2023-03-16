@@ -36,7 +36,7 @@ def get_pre_dependency_list(package):
         return []
 
 
-def get_package_dependencies(name, packages, with_dependencies=True, with_recommended=True, with_pre_dependencies=True):
+def get_package_dependencies(name, packages, with_dependencies=True, with_recommended=True, with_pre_dependencies=True, with_required=False):
     '''
     return a list of all package names that are needed to install the package specified in 'name'
 
@@ -67,6 +67,9 @@ def get_package_dependencies(name, packages, with_dependencies=True, with_recomm
             pre_dependencies = [get_index_name(dep)
                                 for dep in get_pre_dependency_list(pack)]
             extend_unique(dependencies, pre_dependencies)
+        
+        if not with_required:
+            dependencies = [dep for dep in dependencies if packages[dep]['Priority'] not in ['required', 'important']]
 
     return dependencies
 
