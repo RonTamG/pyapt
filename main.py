@@ -17,28 +17,35 @@ from src.packages import *
 from src.install import *
 
 DEFAULT_ARCHITECTURE = 'amd64'
+CLEAR = u'\x1b[0J'
+SAVE = u'\x1b7'
+RESTORE = u'\x1b8'
 
 def progressbar(it, count, prefix='', size=60, out=sys.stdout): # Python3.6+
     '''
     displays a progress bar for an iterator
 
-    modified from the following answer to work with generators without listing them
-    and to provide the value of the last item as a postfix
+    modified from the following answer:
+    1. to work with generators without listing them
+    2. to provide the value of the last item as a postfix.
+    3. to clear the screen using ansi escape characters to fix overflowing output
+    
     https://stackoverflow.com/a/34482761
     '''
-    def print_current_line(line):
-        print(line, end='\r', file=out, flush=True)
-
     def show(current, item=''):
+        print(RESTORE, end='', file=out, flush=True)
+        print(CLEAR, end='', file=out, flush=True)
+        print(SAVE, end='', file=out, flush=True)
+
         filled = int(size * current / count)
         line = f"{prefix}[{'#' * filled}{('.' * (size - filled))}] {current}/{count} [{item}]"
-        print_current_line(line)
+        print(line, end='', file=out, flush=True)
         return len(line)
 
-    prev_len = show(0)
+    print(SAVE, end='', file=out, flush=True)
+    show(0)
     for i, item in enumerate(it):
-        print_current_line(' ' * prev_len)
-        prev_len = show(i + 1, str(item))
+        show(i + 1, str(item))
         yield item
 
     print("\n", flush=True, file=out)
