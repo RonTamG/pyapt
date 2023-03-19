@@ -142,3 +142,18 @@ def add_apt_source_field(package_index, source):
         package['Apt-Source'] = source
 
     return package_index
+
+
+def split_debian_version(version):
+    '''
+    split a debian version string into an epoch, upstream version and debian revision
+    '''
+    pattern = re.compile('((\d+):)?((\d[a-z0-9~.+-]+(?=-))|(\d[a-z0-9~.+]+))(-([a-z0-9+.~]+))?')
+    result = re.match(pattern, version)
+
+    if result.string != version:
+        raise AssertionError(f'function matched {result.string} instead of {version} when must match all input string')
+
+    _, epoch, upstream, _, _, _, revision = result.groups('0')
+    
+    return epoch, upstream, revision

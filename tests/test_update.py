@@ -1,5 +1,7 @@
 import os
 
+import pytest
+
 from src.update import *
 
 
@@ -155,3 +157,20 @@ def test_add_apt_source_field():
     result = add_apt_source_field(
         index, source='http://deb.debian.org/debian bullseye/main amd64')
     assert all(['Apt-Source' in package for package in result.values()])
+
+
+@pytest.mark.parametrize('version, expected_epoch, expected_upstream, expected_revision',
+                         [
+                             ('1:2.30.2-1+deb11u2', '1', '2.30.2', '1+deb11u2'),
+                             ('4.7-1', '0', '4.7', '1'),
+                             ('0.0.14', '0', '0.0.14', '0'),
+                             ('1:8.4p1-5+deb11u1', '1', '8.4p1', '5+deb11u1'),
+                             ('3.0043', '0', '3.0043', '0'),
+                             ('0.11b-20160615-2', '0', '0.11b-20160615', '2'),
+                         ])
+def test_split_debian_version(version, expected_epoch, expected_upstream, expected_revision):
+    epoch, upstream, revision = split_debian_version(version)
+
+    assert epoch == expected_epoch
+    assert upstream == expected_upstream
+    assert revision == expected_revision
