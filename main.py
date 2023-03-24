@@ -178,7 +178,7 @@ def download_package(name, index, temp_folder, with_dependencies=True, with_reco
     url_filenames_to_download = [(url, name) for url, name in url_filenames if not is_downloaded(name, temp_folder)]
     if len(url_filenames_to_download) == 0:
         _, names = zip(*url_filenames)
-        saved = [os.path.join(temp_folder, 'packages', name) for name in names]
+        saved = names
     else:
         urls_to_download, filenames = zip(*url_filenames_to_download)
         downloads = (get(url) for url in urls_to_download)
