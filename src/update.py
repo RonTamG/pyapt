@@ -68,7 +68,14 @@ def generate_index_dictionary(index_data):
                 values[name] = value
 
         try:
-            index[values['Package']] = values
+            if values['Package'] not in index:
+                index[values['Package']] = values
+            else:
+                # add to the index if the version is a higher version than the previous
+                new_version = values['Version']
+                current_version = index[values['Package']]['Version']
+                if debian_upstream_compare(new_version, current_version) > 0:
+                    index[values['Package']] = values
         except KeyError:
             logging.warning(f'failed to parse: "{data}" as package')
 

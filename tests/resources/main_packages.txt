@@ -68,3 +68,22 @@ Filename: pool/main/g/genius/gnome-genius_1.0.25-2_amd64.deb
 Size: 618392
 MD5sum: 2a9f1d72508eaa0a615522da78c4562f
 SHA256: 8c685e010579d576d6d1c5f4e39e9325006fdc1c51299784ddec429039bdb39d
+
+Package: gnome-genius
+Source: genius
+Version: 2.0.25-2
+Installed-Size: 1529
+Maintainer: Felipe Sateler <fsateler@debian.org>
+Architecture: amd64
+Depends: libamtk-5-0 (>= 5.0.0), libc6 (>= 2.29), libcairo2 (>= 1.4.10), libgdk-pixbuf2.0-0 (>= 2.22.0), libglib2.0-0 (>= 2.41.1), libgmp10, libgtk-3-0 (>= 3.21.4), libgtksourceview-4-0 (>= 3.99.7), libmpfr6 (>= 3.1.3), libpango-1.0-0 (>= 1.14.0), libpangocairo-1.0-0 (>= 1.14.0), libreadline8 (>= 6.0), libvte-2.91-0 (>= 0.49.92), genius-common (>= 1.0.25-2), genius-common (<= 1.0.25-2.)
+Description: advanced general purpose calculator program (GNOME frontend)
+Homepage: https://www.5z.com/jirka/genius.html
+Description-md5: 42076cb53eb35b8fa7afae234875a4c3
+Tag: field::mathematics, interface::graphical, interface::x11, role::program,
+ uitoolkit::gtk, uitoolkit::ncurses, x11::application
+Section: gnome
+Priority: optional
+Filename: pool/main/g/genius/gnome-genius_2.0.25-2_amd64.deb
+Size: 618392
+MD5sum: 2a9f1d72508eaa0a615522da78c4562f
+SHA256: 8c685e010579d576d6d1c5f4e39e9325006fdc1c51299784ddec429039bdb39

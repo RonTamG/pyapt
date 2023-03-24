@@ -154,7 +154,12 @@ def apt_update(sources_list_path, temp_folder):
 
     # combine all indexes into one and add virtual packages
     full_index = {}
-    [full_index.update(index) for index in indexes]
+    for index in indexes:
+        for key, value in index.items():
+            if key not in full_index:
+                full_index[key] = value
+            elif dpkg_version_compare(full_index[key]['Version'], value['Version']) < 0:
+                full_index[key] = value
     full_index = add_virtual_indexes(full_index)
 
     return full_index
