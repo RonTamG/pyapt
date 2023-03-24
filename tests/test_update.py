@@ -167,6 +167,7 @@ def test_add_apt_source_field():
                              ('1:8.4p1-5+deb11u1', '1', '8.4p1', '5+deb11u1'),
                              ('3.0043', '0', '3.0043', '0'),
                              ('0.11b-20160615-2', '0', '0.11b-20160615', '2'),
+                             ('1:0', '1', '0', '0')
                          ])
 def test_split_debian_version(version, expected_epoch, expected_upstream, expected_revision):
     epoch, upstream, revision = split_debian_version(version)
@@ -174,3 +175,32 @@ def test_split_debian_version(version, expected_epoch, expected_upstream, expect
     assert epoch == expected_epoch
     assert upstream == expected_upstream
     assert revision == expected_revision
+
+
+@pytest.mark.parametrize('a, b, result',
+                         [
+                             ('1:0', '2:0', -1),
+                             ('0:1-1', '0:2-1', -1),
+                             ('0:1-1', '0:1-2', -1),
+                             # Test for version equality.
+                             ('0:0-0', '0:0-0', 0),
+                             ('0:0-00', '0:00-0', 0),
+                             ('1:2-3', '1:2-3', 0),
+                             # Test for epoch difference.
+                             ('0:0-0', '1:0-0', -1),
+                             ('1:0-0', '0:0-0', 1),
+                             ('11.1+deb11u6', '1:11.1+deb11u6', -1),
+                             # Test for version component difference.
+                             ('0:a-0', '0:b-0', -1),
+                             ('0:b-0', '0:a-0', 1),
+                             ('11.1+deb11u6', '11.2+deb11u6', -1),
+                             ('11.1+deb11u6', '11.1+deb11u6', 0),
+                             ('11.1+deb11u6', '11.0+deb11u6', 1),
+                             # Test for revision component difference.
+                             ('0:0-a', '0:0-b', -1),
+                             ('0:0-b', '0:0-a', 1),
+                             ('1.6.1-5', '1.6.1-5+deb11u1', -299),
+                             ('1:16.28.0~dfsg-0+deb11u1', '1:16.28.0~dfsg-0+deb11u2', -1)
+                         ])
+def test_compare_debian_version(a, b, result):
+    assert dpkg_version_compare(a, b) == result

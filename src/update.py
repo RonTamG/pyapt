@@ -148,12 +148,73 @@ def split_debian_version(version):
     '''
     split a debian version string into an epoch, upstream version and debian revision
     '''
-    pattern = re.compile('((\d+):)?((\d[a-z0-9~.+-]+(?=-))|(\d[a-z0-9~.+]+))(-([a-z0-9+.~]+))?')
+    pattern = re.compile('((\d+):)?(([0-9A-Za-z.+~-]+(?=-))|([0-9A-Za-z.+~]+))(-([0-9A-Za-z.+~]+))?')
     result = re.match(pattern, version)
 
+    if result == None:
+        raise AssertionError(f'function failed to match "{version}" as a dpkg version string')
     if result.string != version:
         raise AssertionError(f'function matched {result.string} instead of {version} when must match all input string')
 
     _, epoch, upstream, _, _, _, revision = result.groups('0')
     
     return epoch, upstream, revision
+
+
+def order(c):
+    '''
+    give a weight to the character to order in the debian version comparison.
+    '''
+    if c.isdigit():
+        return 0
+    elif c.isalpha():
+        return ord(c)
+    elif c == '~':
+        return -1
+    elif c == ' ':
+        return 0
+    elif c:
+        return ord(c) + 256
+    else:
+        return 0
+
+
+def debian_upstream_compare(first, second):
+    '''
+    compare a debian upstream version or revision string with another
+    '''
+    first = first.ljust(len(second), ' ')
+    second = second.ljust(len(first), ' ')
+
+    for a, b in zip(first, second):
+        if not a.isdigit() or not b.isdigit():
+            ac = order(a)
+            bc = order(b)
+            if ac != bc:
+                return ac - bc
+
+        if a.isdigit() and b.isdigit():
+            diff = int(a) - int(b)
+            if diff != 0:
+                return diff
+    else:
+        return 0
+
+
+def dpkg_version_compare(a, b):
+    '''
+    compare 2 debain version strings
+    '''
+    a_epoch, a_version, a_revision = split_debian_version(a)
+    b_epoch, b_version, b_revision = split_debian_version(b)
+
+    if int(a_epoch) > int(b_epoch):
+        return 1
+    if int(a_epoch) < int(b_epoch):
+        return -1
+
+    rc = debian_upstream_compare(a_version, b_version)
+    if rc:
+        return rc
+
+    return debian_upstream_compare(a_revision, b_revision)
