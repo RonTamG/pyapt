@@ -16,7 +16,8 @@ def test_get_package_dependencies_without_recommended():
     assert len(result) == 3
     assert all([pack in result for pack in expected])
 
-def test_get_package_dependencies_without_required_priority():
+
+def test_get_package_dependencies_with_required_priority():
     expected = ['gcc-10-base', 'libc6', 'libcrypt1', 'libgcc-s1']
 
     with open(os.path.join('tests', 'resources', 'libc6_packages.txt'), 'r', encoding='utf-8') as index_file:
@@ -28,6 +29,17 @@ def test_get_package_dependencies_without_required_priority():
     assert len(result) == 4
     assert all([pack in result for pack in expected])
 
+
+def test_get_package_dependencies_without_pre_dependencies():
+    with open(os.path.join('tests', 'resources', 'pre_depends_package.txt'), 'r', encoding='utf-8') as index_file:
+        index_data = index_file.read()
+
+    index = generate_index_dictionary(index_data)
+    result = get_package_dependencies('libc6', index, with_recommended=False, with_required=True)
+    assert 'predep' in result
+
+    result = get_package_dependencies('libc6', index, with_pre_dependencies=False, with_recommended=False, with_required=True)
+    assert 'predep' not in result
 
 
 def test_get_package_url():

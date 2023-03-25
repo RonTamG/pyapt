@@ -63,7 +63,7 @@ def get_package_dependencies(name, packages, with_dependencies=True, with_recomm
                            for dep in get_recommended_list(pack)]
             extend_unique(dependencies, recommended)
 
-        if with_dependencies:
+        if with_pre_dependencies:
             pre_dependencies = [get_index_name(dep)
                                 for dep in get_pre_dependency_list(pack)]
             extend_unique(dependencies, pre_dependencies)
