@@ -44,14 +44,15 @@ def get_package_dependencies(name, packages, with_dependencies=True, with_recomm
     these are the defaults that 'apt install' has
     '''
     dependencies = [name]
-
-    for dependency in dependencies:
-        name = get_index_name(dependency)
+    i = 0
+    while i < len(dependencies):
+        name = get_index_name(dependencies[i])
 
         try:
             pack = packages[name]
         except KeyError:
             logging.error(f'failed to find package {name}')
+            i += 1
             continue
 
         if with_dependencies:
@@ -70,6 +71,8 @@ def get_package_dependencies(name, packages, with_dependencies=True, with_recomm
         
         if not with_required:
             dependencies = [dep for dep in dependencies if packages[dep]['Priority'] not in ['required', 'important']]
+        
+        i += 1
 
     return dependencies
 
