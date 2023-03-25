@@ -35,6 +35,20 @@ no recommended
 pyapt --no-recommended git
 ```
 
+include packages marked as required or important
+
+```
+pyapt --with-required git
+```
+
+keep updates between uses or keep all downloads
+
+```
+pyapt --keep-update git
+
+pyapt --keep git
+```
+
 This program requires a sources.list file and searches for it in the current directory.
 
 You can use `--sources-list` to specify one explicitly.
@@ -42,29 +56,7 @@ You can use `--sources-list` to specify one explicitly.
 ```
 pyapt --sources-list ./sources git
 ```
-## Help
-```
-usage: pyapt [-h] [--sources-list SOURCES_LIST] [--temp-folder TEMP_FOLDER] [--keep] [--keep-update] [--no-recommended] [--no-dependencies] [--no-pre-dependencies] packages [packages ...]
 
-A basic python implementation of apt which allows downloading packages with all dependencies on non Linux machines
-
-positional arguments:
-  packages              list of packages to download
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --sources-list SOURCES_LIST
-                        the sources list to use in order to download the packages
-  --temp-folder TEMP_FOLDER
-                        the folder to download update index and packages into
-  --keep                don't remove temp directory at the end of all package downloads
-  --keep-update         don't remove temp update directory at the end of all package downloads
-
-  --no-recommended      don't download recommended packages
-  --no-dependencies     don't download dependency packages
-  --no-pre-dependencies
-                        don't download pre-dependency packages
-```
 # How it works
 This program parses a sources.list file and uses it to resolve the package registry to use.
 
