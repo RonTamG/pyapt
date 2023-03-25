@@ -1,0 +1,106 @@
+# This workflow will:
+# - run tests using pytest
+# - build binaries using pyinstaller for multiple operating systems
+# - create a release using conventional commits which includes the build binaries
+
+name: Python application
+
+on:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest
+
+    - name: Test with pytest
+      run: |
+        pytest
+    
+  build:
+    needs: test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            TARGET: windows
+            OUTPUT_FILE: .\dist\pyapt.exe
+            UPLOAD_NAME: pyapt.exe
+          - os: ubuntu-latest
+            TARGET: ubuntu
+            OUTPUT_FILE: ./dist/pyapt
+            UPLOAD_NAME: pyapt-ubuntu
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller
+      
+    - name: Build with pyinstaller for ${{ matrix.TARGET }}
+      run: |
+        pyinstaller --onefile --clean --name pyapt main.py  
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: builds
+        path: ${{ matrix.OUTPUT_FILE }}
+
+
+  create_release:
+    needs: build
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Conventional changelog action
+      id: changelog
+      uses: TriPSs/conventional-changelog-action@v3
+      with:
+        fallback-version: 1.0.0
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+          
+    - name: Download all build artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: builds
+        path: builds/
+  
+    - name: Create release
+      id: create_release
+      uses: softprops/action-gh-release@v1
+      if: ${{ steps.changelog.outputs.skipped == 'false' }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.changelog.outputs.tag }}
+        name: ${{ steps.changelog.outputs.tag }}
+        body: ${{ steps.changelog.outputs.clean_changelog }}
+        files:
+          builds/*
