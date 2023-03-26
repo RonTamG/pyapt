@@ -1,4 +1,7 @@
 # pyapt
+[![Python application](https://github.com/RonTamG/pyapt/actions/workflows/python-app.yaml/badge.svg)](https://github.com/RonTamG/pyapt/actions/workflows/python-app.yaml)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/RonTamG/pyapt)
+![GitHub](https://img.shields.io/github/license/RonTamG/pyapt)
 
 This program was made in order to solve a common issue where one wants to download an apt package with all it's dependencies on a non linux computer connected to the internet, and later install it in an offline environment.
 
