@@ -8,6 +8,11 @@ name: Python application
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - 'tests/*'
+      - 'src/*'
+      - 'main.py'
+
 
 permissions:
   contents: write
