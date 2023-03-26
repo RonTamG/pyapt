@@ -57,6 +57,8 @@ You can use `--sources-list` to specify one explicitly.
 pyapt --sources-list ./sources git
 ```
 
+![pyapt-git-install](assets/pyapt-git-install.gif)
+
 # How it works
 This program parses a sources.list file and uses it to resolve the package registry to use.
 
