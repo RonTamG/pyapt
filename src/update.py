@@ -87,7 +87,7 @@ def get_apt_sources(url):
     return the apt sources of a given index package url
     '''
     pattern = re.compile(
-        '(?P<url>\w+:\/\/.+?\/.+)\/dists\/(?P<dist>.+?)\/(?P<component>.+?)\/binary-(?P<arch>.+?)\/Packages.xz')
+        r'(?P<url>\w+://.+?/.+)/dists/(?P<dist>.+?)/(?P<component>.+?)/binary-(?P<arch>.+?)/Packages.xz')
     result = re.match(pattern, url)
 
     uri, dist, component, architecture = result.groups()
@@ -155,7 +155,7 @@ def split_debian_version(version):
     '''
     split a debian version string into an epoch, upstream version and debian revision
     '''
-    pattern = re.compile('((\d+):)?(([0-9A-Za-z.+~-]+(?=-))|([0-9A-Za-z.+~]+))(-([0-9A-Za-z.+~]+))?')
+    pattern = re.compile(r'((\d+):)?(([0-9A-Za-z.+~-]+(?=-))|([0-9A-Za-z.+~]+))(-([0-9A-Za-z.+~]+))?')
     result = re.match(pattern, version)
 
     if result == None:
