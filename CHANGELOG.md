@@ -1,4 +1,18 @@
-# 1.0.0 (2023-03-25)
+# [1.1.0](https://github.com/RonTamG/pyapt/compare/v1.0.0...v1.1.0) (2023-07-31)
+
+
+### Bug Fixes
+
+* fixed deprecation warnings in update regex ([f07ce9a](https://github.com/RonTamG/pyapt/commit/f07ce9a3d7f228a44a178e34d7a9fb5cde4f5c12))
+
+
+### Features
+
+* added linter formatter and type checking ([0e53ab5](https://github.com/RonTamG/pyapt/commit/0e53ab528d8a7365616679dd90343c58968f0e2b))
+
+
+
+# [1.0.0](https://github.com/RonTamG/pyapt/compare/6b78439443fd32f58892e7f56e8cb570d04c2dd8...v1.0.0) (2023-03-25)
 
 
 ### Bug Fixes
