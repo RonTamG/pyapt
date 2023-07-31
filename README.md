@@ -7,7 +7,7 @@ This program was made in order to solve a common issue where one wants to downlo
 
 ## Why not apt-offline
 The reasons I chose not to use apt-offline: 
-1. It is required to be installed on both machine.
+1. It is required to be installed on both machines.
 2. It requires a file to be transfered from the offline machine to the online one and then back.
 
 I wanted a solution that requires only one file transfer, from the online machine to the offline one.
