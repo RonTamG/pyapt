@@ -82,7 +82,6 @@ def generate_index_dictionary(index_data):
                         f'failed to parse: "{line}" in package data:\n{data}'
                     )
 
-                name = name.replace("-", "_").strip()
                 values[name] = value
 
         try:

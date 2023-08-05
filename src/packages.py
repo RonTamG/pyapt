@@ -29,8 +29,8 @@ def get_recommended_list(package):
 
 
 def get_pre_dependency_list(package):
-    if "Pre_Depends" in package:
-        return package["Pre_Depends"].split(",")
+    if "Pre-Depends" in package:
+        return package["Pre-Depends"].split(",")
     else:
         return []
 
