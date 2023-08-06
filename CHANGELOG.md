@@ -1,3 +1,14 @@
+# [1.2.0](https://github.com/RonTamG/pyapt/compare/v1.1.0...v1.2.0) (2023-08-06)
+
+
+### Features
+
+* added cleanup of install script ([6259705](https://github.com/RonTamG/pyapt/commit/625970566360352f61b8c8c4dbfd339645003892))
+* install script now uses apt install from local repo ([2ad0e3d](https://github.com/RonTamG/pyapt/commit/2ad0e3de146138659ec20bb687e3055c201e43df))
+* removed change to Package keys names in index ([0554468](https://github.com/RonTamG/pyapt/commit/05544689d78f49b58759a8fa14b7d768da368213))
+
+
+
 # [1.1.0](https://github.com/RonTamG/pyapt/compare/v1.0.0...v1.1.0) (2023-07-31)
 
 
