@@ -91,6 +91,8 @@ http://deb.debian.org/debian/dists/bullseye-updates/main/binary-all/Packages.xz
 
 Using this dictionary it can find all the dependencies of a requested package and download them from the registry.
 
-The files above are used again during the installation process and are a part of the generated tar.gz. During the installation process these files are copied to `/var/lib/apt/lists` to be used by apt in order to finish the installation of all packages. 
+After downloading all the packages, it creates a 'Package' file with all the metadata of the downloaded packages, this file is required for apt to recognize the package files. The install script then adds a line to the top of the /etc/apt/sources.list file which specifies a new source, the local files.
 
-These files are not cleared by default during installation and can be cleared using `rm /var/lib/apt/lists/*` after the installation finished, be carefull if you have any files you want to keep in this directory.
+After running 'apt update' the script can then just use 'apt install package' to install the package as usual.
+
+Afterwards it cleans up the /etc/apt/sources.list file by removing the added line.
