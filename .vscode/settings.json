@@ -7,8 +7,6 @@
         }
     },
     "python.defaultInterpreterPath": "/usr/local/bin/python",
-    "python.formatting.provider": "black",
-    "python.formatting.blackPath": "/usr/local/py-utils/bin/black",
-    "python.linting.mypyPath": "/usr/local/py-utils/bin/mypy",
-	"python.linting.mypyEnabled": false,
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "ms-python.black-formatter",
 }
