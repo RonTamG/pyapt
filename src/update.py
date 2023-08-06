@@ -252,3 +252,7 @@ def dpkg_version_compare(a, b):
         return rc
 
     return debian_upstream_compare(a_revision, b_revision)
+
+
+def index_to_package_file_format(package):
+    return "\n".join([f"{key}: {value}" for key, value in package.items()])

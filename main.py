@@ -1,6 +1,7 @@
 import argparse
 import lzma
 import os
+import re
 import shutil
 import sys
 import tarfile
@@ -18,6 +19,7 @@ from src.update import (
     get_apt_sources,
     get_index_urls,
     get_release_urls,
+    index_to_package_file_format,
     parse_sources_list,
     url_into_saved_file_name,
 )
@@ -220,7 +222,7 @@ def download_package(
         )
         saved = progressbar(saved, len(urls_to_download), prefix=f"{name}: ")
 
-    return list(saved)
+    return (list(saved), packages)
 
 
 def write_install_script(filenames, temp_folder):
@@ -279,6 +281,16 @@ def create_parser():
     return parser
 
 
+def generate_packages_file(index, packages, temp_folder):
+    data = "\n\n".join(
+        [index_to_package_file_format(index[package]) for package in packages]
+    )
+    data += "\n"
+    data = re.sub(r"Filename: (.+\/)+(.+)", r"Filename: ./\2", data)
+
+    Path(temp_folder, "packages", "Packages").write_text(data)
+
+
 def main():
     args = create_parser().parse_args()
     temp_folder = args.temp_folder
@@ -291,7 +303,7 @@ def main():
     index = apt_update(sources_list, temp_folder)
 
     for name in args.packages:
-        filenames = download_package(
+        _, packages = download_package(
             name,
             index,
             temp_folder,
@@ -300,7 +312,8 @@ def main():
             with_pre_dependencies,
             with_required,
         )
-        write_install_script(filenames, temp_folder)
+        generate_packages_file(index, packages, temp_folder)
+        write_install_script(name, temp_folder)
         tar_dir(temp_folder, f"{name}.tar.gz")
 
         if not args.keep:

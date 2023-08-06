@@ -10,6 +10,7 @@ from src.update import (
     get_apt_sources,
     get_index_urls,
     get_release_urls,
+    index_to_package_file_format,
     parse_sources_list,
     split_debian_version,
     url_into_saved_file_name,
@@ -319,3 +320,39 @@ def test_split_debian_version(
 )
 def test_compare_debian_version(a, b, result):
     assert dpkg_version_compare(a, b) == result
+
+
+def test_index_can_return_to_package_file():
+    with open(
+        os.path.join("tests", "resources", "libc6_packages.txt"), "r"
+    ) as index_file:
+        data = index_file.read()
+    index = generate_index_dictionary(data)
+
+    expected = """\
+Package: libc6
+Source: glibc
+Version: 2.31-13+deb11u5
+Installed-Size: 12837
+Maintainer: GNU Libc Maintainers <debian-glibc@lists.debian.org>
+Architecture: amd64
+Replaces: libc6-amd64
+Depends: libgcc-s1, libcrypt1
+Recommends: libidn2-0 (>= 2.0.5~), libnss-nis, libnss-nisplus
+Suggests: glibc-doc, debconf | debconf-2.0, libc-l10n, locales
+Breaks: busybox (<< 1.30.1-6), hurd (<< 1:0.9.git20170910-1), ioquake3 (<< 1.36+u20200211.f2c61c1~dfsg-2~), iraf-fitsutil (<< 2018.07.06-4), libgegl-0.4-0 (<< 0.4.18), libtirpc1 (<< 0.2.3), locales (<< 2.31), locales-all (<< 2.31), macs (<< 2.2.7.1-3~), nocache (<< 1.1-1~), nscd (<< 2.31), openarena (<< 0.8.8+dfsg-4~), openssh-server (<< 1:8.1p1-5), r-cran-later (<< 0.7.5+dfsg-2), wcc (<< 0.0.2+dfsg-3)
+Description: GNU C Library: Shared libraries
+Multi-Arch: same
+Homepage: https://www.gnu.org/software/libc/libc.html
+Description-md5: fc3001b0b90a1c8e6690b283a619d57f
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/g/glibc/libc6_2.31-13+deb11u5_amd64.deb
+Size: 2825060
+MD5sum: 3230125fb2df166e80d7c0de7d148bbb
+SHA256: adf6994e4c000ff5b882db411a23925a5860a10146e27fa08fc08cb4d08e6d85\
+"""  # noqa: E501
+
+    result = index_to_package_file_format(index["libc6"])
+    assert result == expected

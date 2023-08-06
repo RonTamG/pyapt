@@ -1,32 +1,24 @@
-def create_install_script(filenames):
+def create_install_script(name):
     """
     create a bash script that installs the package with all it's dependencies
     """
-    packages = [
-        f"dpkg --refuse-downgrade -i ./packages/{name}" for name in reversed(filenames)
-    ]
-    install_lines = "\n".join(packages)
-
     script = f"""\
 #!/bin/bash
 
-# save original lists
-mkdir /tmp/pyapt
-mv /var/lib/apt/lists/* /tmp/pyapt/
+# make sure /etc/apt/sources.list exists
+touch /etc/apt/sources.list
 
-# transfer required lists to directory
-cp ./update/* /var/lib/apt/lists/
+# set local repo
+echo deb [trusted=yes] file:`pwd`/packages/ ./ | cat - /etc/apt/sources.list > temp && mv temp /etc/apt/sources.list
+
+# update apt sources
+apt update
 
 # install packages
-{install_lines}
-
-# fix installs to complete all dependencies
-apt --fix-broken install --no-download -y
+apt install {name}
 
 # cleanup and restore original lists
-rm /var/lib/apt/lists/*
-mv /tmp/pyapt/* /var/lib/apt/lists/
-rmdir /tmp/pyapt
-"""
+tail -n +2 /etc/apt/sources.list > /etc/apt/sources.list
+"""  # noqa: E501
 
     return script
