@@ -91,8 +91,6 @@ http://deb.debian.org/debian/dists/bullseye-updates/main/binary-all/Packages.xz
 
 Using this dictionary it can find all the dependencies of a requested package and download them from the registry.
 
-After downloading all the packages, it creates a 'Package' file with all the metadata of the downloaded packages, this file is required for apt to recognize the package files. The install script then adds a line to the top of the /etc/apt/sources.list file which specifies a new source, the local files.
+After downloading all the packages, it creates a 'Package' file with all the metadata of the downloaded packages, this file is required for apt to recognize the package files. The install script then adds a temporary file to /etc/apt/sources.list.d named pyapt.list which specifies a new source, the local files.
 
-After running 'apt update' the script can then just use 'apt install package' to install the package as usual.
-
-Afterwards it cleans up the /etc/apt/sources.list file by removing the added line.
+Afterwards it updates packages according to the new list, without updating any other source, and then you can just use 'apt install package' to install the package as usual
