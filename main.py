@@ -80,10 +80,13 @@ def get(url):
 
 
 def tar_dir(path, name):
+    def set_permissions(tarinfo):
+        tarinfo.mode = 0o655
+        return tarinfo
+
     with tarfile.open(name, "w:gz") as tar:
-        for root, dirs, files in os.walk(path):
-            for f in files:
-                tar.add(os.path.join(root, f))
+        tar.add(Path(path, "packages"))
+        tar.add(Path(path, "install.sh"), filter=set_permissions)
 
 
 def save_update_file(name, data, temp_folder):
