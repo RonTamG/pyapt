@@ -1,3 +1,13 @@
+# [1.3.0](https://github.com/RonTamG/pyapt/compare/v1.2.0...v1.3.0) (2023-08-07)
+
+
+### Features
+
+* added execute permissions to install.sh file in tar ([cb6bb33](https://github.com/RonTamG/pyapt/commit/cb6bb339f1534fa786db0c750c940c9336f80c8b))
+* install script uses new list in sources.list.d and updates only it ([c9094c7](https://github.com/RonTamG/pyapt/commit/c9094c779807f1d28192ccb2ffc08223eee24be1))
+
+
+
 # [1.2.0](https://github.com/RonTamG/pyapt/compare/v1.1.0...v1.2.0) (2023-08-06)
 
 
