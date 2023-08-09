@@ -1,3 +1,12 @@
+# [1.4.0](https://github.com/RonTamG/pyapt/compare/v1.3.0...v1.4.0) (2023-08-09)
+
+
+### Features
+
+* added new merged script release build ([62cc958](https://github.com/RonTamG/pyapt/commit/62cc9582da25ca7b9d7d27f5245e0b1b087efba9))
+
+
+
 # [1.3.0](https://github.com/RonTamG/pyapt/compare/v1.2.0...v1.3.0) (2023-08-07)
 
 
