@@ -12,6 +12,7 @@ on:
       - 'tests/*'
       - 'src/*'
       - 'main.py'
+      - '.github/workflows/*'
 
 
 permissions:
@@ -40,7 +41,7 @@ jobs:
     - name: Test
       run: pytest
     
-  build:
+  build_executables:
     needs: test
     runs-on: ${{ matrix.os }}
     strategy:
@@ -76,10 +77,30 @@ jobs:
       with:
         name: builds
         path: ${{ matrix.OUTPUT_FILE }}
+  
+  build_merged_python:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
 
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: pip install black isort
+    - name: Merge source files
+      run: cat src/update.py src/packages.py src/install.py main.py  | python .github/clean_imports.py | isort --float-to-top - | black - > pyapt.py
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: builds
+        path: pyapt.py
 
   create_release:
-    needs: build
+    needs: [build_executables, build_merged_python] 
     runs-on: windows-latest
 
     steps:
