@@ -5,10 +5,9 @@ import re
 import shutil
 import sys
 import tarfile
-import urllib.request
-from glob import glob
 from pathlib import Path
 
+from src.file_manager import FileManager
 from src.install import create_install_script
 from src.packages import get_package_dependencies, get_package_url
 from src.sources_list import SourcesList
@@ -19,7 +18,6 @@ from src.update import (
     generate_index_dictionary,
     get_apt_sources,
     index_to_package_file_format,
-    url_into_saved_file_name,
 )
 
 DEFAULT_ARCHITECTURE = "amd64"
@@ -59,24 +57,6 @@ def progressbar(it, count, prefix="", size=60, out=sys.stdout):  # Python3.6+
     print("\n", flush=True, file=out)
 
 
-def is_downloaded(filename, directory):
-    """
-    check if file is in directory
-    """
-    return glob(os.path.join(directory, "**", filename)) != []
-
-
-def get(url):
-    """
-    send a get request to the specified url and return the response
-    """
-    with urllib.request.urlopen(url) as response:
-        if response.status == 200:
-            return response.read()
-        else:
-            return ""
-
-
 def tar_dir(path, name):
     def set_permissions(tarinfo):
         tarinfo.mode = 0o655
@@ -85,36 +65,6 @@ def tar_dir(path, name):
     with tarfile.open(name, "w:gz") as tar:
         tar.add(Path(path, "packages"))
         tar.add(Path(path, "install.sh"), filter=set_permissions)
-
-
-def save_update_file(name, data, temp_folder):
-    """
-    save a file to a subdirectory 'update' in the temp directory
-    """
-    # create directory if it doesn't exist
-    update_directory = os.path.join(temp_folder, "update")
-    Path(update_directory).mkdir(parents=True, exist_ok=True)
-
-    path = os.path.join(update_directory, name)
-    with open(path, "wb") as update_file:
-        update_file.write(data)
-
-    return path
-
-
-def save_package_file(name, data, temp_folder):
-    """
-    save a file to a subdirectory 'packages' in the temp directory
-    """
-    # create directory if it doesn't exist
-    update_directory = os.path.join(temp_folder, "packages")
-    Path(update_directory).mkdir(parents=True, exist_ok=True)
-
-    path = os.path.join(update_directory, name)
-    with open(path, "wb") as update_file:
-        update_file.write(data)
-
-    return name
 
 
 def read_lzma(path):
@@ -131,8 +81,7 @@ def apt_update(sources_list_path, temp_folder):
     """
     retrieve the required files and create an index of the packages
     """
-    with open(sources_list_path, "r") as sources_list:
-        data = sources_list.read()
+    data = Path(sources_list_path).read_text()
 
     # generate urls from sources list
     sources_list = SourcesList(data)
@@ -140,23 +89,13 @@ def apt_update(sources_list_path, temp_folder):
     urls.extend(sources_list.index_urls(architecture=DEFAULT_ARCHITECTURE))
 
     # download index files and save them
-    url_filenames = [(url, url_into_saved_file_name(url)) for url in urls]
-    url_filenames_to_download = [
-        (url, name)
-        for url, name in url_filenames
-        if not is_downloaded(name, temp_folder)
+    manager = FileManager(temp_folder)
+    get_urls = (manager.get_update_file(url) for url in urls)
+    saved = [
+        name
+        for name in progressbar(get_urls, len(urls), prefix="Update: ")
+        if name != ""
     ]
-    if len(url_filenames_to_download) == 0:
-        _, names = zip(*url_filenames)
-        saved = (os.path.join(temp_folder, "update", name) for name in names)
-    else:
-        urls_to_download, filenames = zip(*url_filenames_to_download)
-        downloads = (get(url) for url in urls_to_download)
-        saved = (
-            save_update_file(name, data, temp_folder)
-            for name, data in zip(filenames, downloads)
-        )
-        saved = progressbar(saved, len(urls_to_download), prefix="Update: ")
 
     # create an index dictionary from the index files
     index_files = (path for path in saved if path.endswith("Packages.xz"))
@@ -205,25 +144,16 @@ def download_package(
 
     urls = [get_package_url(name, index) for name in packages]
 
-    url_filenames = [(url, os.path.basename(url)) for url in urls]
-    url_filenames_to_download = [
-        (url, name)
-        for url, name in url_filenames
-        if not is_downloaded(name, temp_folder)
+    # download index files and save them
+    manager = FileManager(temp_folder)
+    get_urls = (manager.get_package_file(url) for url in urls)
+    saved = [
+        name
+        for name in progressbar(get_urls, len(urls), prefix=f"{name}: ")
+        if name != ""
     ]
-    if len(url_filenames_to_download) == 0:
-        _, names = zip(*url_filenames)
-        saved = names
-    else:
-        urls_to_download, filenames = zip(*url_filenames_to_download)
-        downloads = (get(url) for url in urls_to_download)
-        saved = (
-            save_package_file(name, data, temp_folder)
-            for name, data in zip(filenames, downloads)
-        )
-        saved = progressbar(saved, len(urls_to_download), prefix=f"{name}: ")
 
-    return (list(saved), packages)
+    return (saved, packages)
 
 
 def write_install_script(filenames, temp_folder):
