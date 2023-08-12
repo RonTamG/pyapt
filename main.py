@@ -11,16 +11,14 @@ from pathlib import Path
 
 from src.install import create_install_script
 from src.packages import get_package_dependencies, get_package_url
+from src.sources_list import SourcesList
 from src.update import (
     add_apt_source_field,
     add_virtual_indexes,
     dpkg_version_compare,
     generate_index_dictionary,
     get_apt_sources,
-    get_index_urls,
-    get_release_urls,
     index_to_package_file_format,
-    parse_sources_list,
     url_into_saved_file_name,
 )
 
@@ -137,9 +135,9 @@ def apt_update(sources_list_path, temp_folder):
         data = sources_list.read()
 
     # generate urls from sources list
-    parts = parse_sources_list(data)
-    urls = get_release_urls(parts)
-    urls.extend(get_index_urls(parts, architecture=DEFAULT_ARCHITECTURE))
+    sources_list = SourcesList(data)
+    urls = sources_list.release_urls()
+    urls.extend(sources_list.index_urls(architecture=DEFAULT_ARCHITECTURE))
 
     # download index files and save them
     url_filenames = [(url, url_into_saved_file_name(url)) for url in urls]
