@@ -46,7 +46,7 @@ def get_apt_sources(url):
     return the apt sources of a given index package url
     """
     pattern = re.compile(
-        r"(?P<url>\w+://.+?/.+)/dists/(?P<dist>.+?)/(?P<component>.+?)/binary-(?P<arch>.+?)/Packages.xz"
+        r"(?P<url>\w+://.+?/.+)/dists/(?P<dist>.+?)/(?P<component>.+?)/binary-(?P<arch>.+?)/Packages"
     )
     result = re.match(pattern, url)
     if result is None:

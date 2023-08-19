@@ -41,7 +41,7 @@ class SourcesList:
                         dist,
                         component,
                         "binary-" + architecture,
-                        "Packages.xz",
+                        "Packages",
                     )
                     for component in components
                 ]

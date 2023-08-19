@@ -1,4 +1,5 @@
 import logging
+import urllib
 import urllib.request
 from pathlib import Path
 
@@ -17,6 +18,7 @@ def url_into_saved_file_name(url):
 class FileManager:
     def __init__(self, folder):
         self.folder = Path(folder)
+        self.supported_compressions = [".xz", ".gz", ""]
 
     def get(self, url, name, directory=""):
         """
@@ -24,21 +26,33 @@ class FileManager:
         """
         saved_name = self.folder / directory / name
         if saved_name.exists():
-            return str(saved_name)
+            return saved_name
 
-        with urllib.request.urlopen(url) as response:
+        request = urllib.request.Request(
+            url,
+            headers={"User-Agent": "Mozilla"},
+        )
+
+        with urllib.request.urlopen(request) as response:
             if response.status == 200:
                 self.save_file(name, response.read(), directory)
-                return str(saved_name)
+                return saved_name
             else:
                 logging.warning(
                     f"failed to download {url} with status {response.status}"
                 )
-                return ""
+                return Path("")
 
     def get_update_file(self, url):
-        name = url_into_saved_file_name(url)
-        return self.get(url, name, UPDATE_SUBDIRECTORY)
+        for compression in self.supported_compressions:
+            name = url_into_saved_file_name(url + compression)
+
+            try:
+                return self.get(url + compression, name, UPDATE_SUBDIRECTORY)
+            except urllib.error.HTTPError:
+                continue
+
+        return ""
 
     def get_package_file(self, url):
         name = Path(url).name

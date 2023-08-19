@@ -15,15 +15,15 @@ def sources_list():
 
 def test_sources_list_returns_index_urls(sources_list):
     expected = [
-        "http://deb.debian.org/debian/dists/bullseye/main/binary-amd64/Packages.xz",
-        "http://deb.debian.org/debian/dists/bullseye/contrib/binary-amd64/Packages.xz",
-        "http://deb.debian.org/debian/dists/bullseye/non-free/binary-amd64/Packages.xz",
-        "http://deb.debian.org/debian/dists/bullseye-updates/main/binary-amd64/Packages.xz",
-        "http://deb.debian.org/debian/dists/bullseye-updates/contrib/binary-amd64/Packages.xz",
-        "http://deb.debian.org/debian/dists/bullseye-updates/non-free/binary-amd64/Packages.xz",
-        "http://security.debian.org/debian-security/dists/bullseye-security/main/binary-amd64/Packages.xz",
-        "http://security.debian.org/debian-security/dists/bullseye-security/contrib/binary-amd64/Packages.xz",
-        "http://security.debian.org/debian-security/dists/bullseye-security/non-free/binary-amd64/Packages.xz",
+        "http://deb.debian.org/debian/dists/bullseye/main/binary-amd64/Packages",
+        "http://deb.debian.org/debian/dists/bullseye/contrib/binary-amd64/Packages",
+        "http://deb.debian.org/debian/dists/bullseye/non-free/binary-amd64/Packages",
+        "http://deb.debian.org/debian/dists/bullseye-updates/main/binary-amd64/Packages",
+        "http://deb.debian.org/debian/dists/bullseye-updates/contrib/binary-amd64/Packages",
+        "http://deb.debian.org/debian/dists/bullseye-updates/non-free/binary-amd64/Packages",
+        "http://security.debian.org/debian-security/dists/bullseye-security/main/binary-amd64/Packages",
+        "http://security.debian.org/debian-security/dists/bullseye-security/contrib/binary-amd64/Packages",
+        "http://security.debian.org/debian-security/dists/bullseye-security/non-free/binary-amd64/Packages",
     ]
 
     result = SourcesList(sources_list).index_urls(architecture="amd64")

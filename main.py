@@ -1,4 +1,5 @@
 import argparse
+import gzip
 import lzma
 import os
 import re
@@ -67,14 +68,16 @@ def tar_dir(path, name):
         tar.add(Path(path, "install.sh"), filter=set_permissions)
 
 
-def read_lzma(path):
+def read(path):
     """
-    read a file from disk and decompress it using lzma
+    return the contents of a text file, supports xz, gz compressions
     """
-    with open(path, "rb") as index_file:
-        data = index_file.read()
-
-    return lzma.decompress(data).decode("utf-8")
+    if path.suffix == ".xz":
+        return lzma.decompress(path.read_bytes()).decode("utf-8")
+    elif path.suffix == ".gz":
+        return gzip.decompress(path.read_bytes()).decode("utf-8")
+    else:
+        return path.read_text()
 
 
 def apt_update(sources_list_path, temp_folder):
@@ -97,12 +100,14 @@ def apt_update(sources_list_path, temp_folder):
     ]
 
     # create an index dictionary from the index files
-    index_files = (path for path in saved if path.endswith("Packages.xz"))
-    decompressed = (read_lzma(path) for path in index_files)
-    indexes = (generate_index_dictionary(data) for data in decompressed)
+    index_files = (path for path in saved if path.stem.endswith("Packages"))
+    decompressed = (read(path) for path in index_files)
+    indexes = (
+        generate_index_dictionary(data) for data in decompressed if len(data) > 0
+    )
 
     # add an 'Apt-Source' key to all packages in the index, used later in order to download package  # noqa: E501
-    sources = (get_apt_sources(url) for url in urls if url.endswith("Packages.xz"))
+    sources = (get_apt_sources(url) for url in urls)
     indexes = (
         add_apt_source_field(index, source) for index, source in zip(indexes, sources)
     )
