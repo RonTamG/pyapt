@@ -32,6 +32,12 @@ def remove_module_imports(code, modules_to_remove):
 
 
 code = sys.stdin.read()
-modules_to_remove = ["src.update", "src.packages", "src.install"]
+modules_to_remove = [
+    "src.sources_list",
+    "src.file_manager",
+    "src.update",
+    "src.packages",
+    "src.install",
+]
 
 print(remove_module_imports(code, modules_to_remove))
