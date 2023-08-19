@@ -1,5 +1,6 @@
 import logging
 import re
+from typing import Dict
 
 
 def generate_index_dictionary(index_data):
@@ -10,7 +11,7 @@ def generate_index_dictionary(index_data):
     """
     index = {}
     for data in index_data.strip().split("\n\n"):
-        values = {}
+        values: Dict[str, str] = {}
         name = ""
         for line in data.splitlines():
             if line.startswith(" ") and name in values:
