@@ -27,15 +27,6 @@ class SourcesList:
     def __init__(self, sources_list):
         self.parts = _parse_sources_list(sources_list)
 
-    def release_urls(self):
-        """
-        generate the list of InRelease files to fetch from the repository
-        """
-        return [
-            posixpath.join(url, "dists", dist, "InRelease")
-            for (_, url, dist, *components) in self.parts
-        ]
-
     def index_urls(self, architecture):
         """
         generate the list of Package files to fetch from the repository

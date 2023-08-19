@@ -85,8 +85,7 @@ def apt_update(sources_list_path, temp_folder):
 
     # generate urls from sources list
     sources_list = SourcesList(data)
-    urls = sources_list.release_urls()
-    urls.extend(sources_list.index_urls(architecture=DEFAULT_ARCHITECTURE))
+    urls = sources_list.index_urls(architecture=DEFAULT_ARCHITECTURE)
 
     # download index files and save them
     manager = FileManager(temp_folder)

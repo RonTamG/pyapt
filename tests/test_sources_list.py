@@ -13,17 +13,6 @@ def sources_list():
     """  # noqa: E501
 
 
-def test_sources_list_returns_release_urls(sources_list):
-    expected = [
-        "http://deb.debian.org/debian/dists/bullseye/InRelease",
-        "http://deb.debian.org/debian/dists/bullseye-updates/InRelease",
-        "http://security.debian.org/debian-security/dists/bullseye-security/InRelease",
-    ]
-
-    result = SourcesList(sources_list).release_urls()
-    assert result == expected
-
-
 def test_sources_list_returns_index_urls(sources_list):
     expected = [
         "http://deb.debian.org/debian/dists/bullseye/main/binary-amd64/Packages.xz",
