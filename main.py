@@ -223,7 +223,7 @@ def generate_packages_file(index, packages, temp_folder):
     data += "\n"
     data = re.sub(r"Filename: (.+\/)+(.+)", r"Filename: ./\2", data)
 
-    Path(temp_folder, "packages", "Packages").write_text(data)
+    Path(temp_folder, "packages", "Packages").write_text(data, encoding="utf-8")
 
 
 def main():
