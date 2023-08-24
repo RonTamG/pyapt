@@ -1,6 +1,5 @@
 import logging
 import re
-from typing import Dict
 
 
 def generate_index_dictionary(index_data):
@@ -11,21 +10,11 @@ def generate_index_dictionary(index_data):
     """
     index = {}
     for data in index_data.strip().split("\n\n"):
-        values: Dict[str, str] = {}
-        name = ""
-        for line in data.splitlines():
-            if line.startswith(" ") and name in values:
-                values[name] += line
-            else:
-                try:
-                    name, value = line.split(": ", maxsplit=1)
-                except ValueError:
-                    logging.warning(
-                        f'failed to parse: "{line}" in package data:\n{data}'
-                    )
-                    continue
-
-                values[name] = value
+        matches = re.finditer(
+            r"^(?P<name>\S+?):(?P<value>(.*)(\n\s.+)?)\n?", data, re.MULTILINE
+        )
+        groups = [(match.group("name"), match.group("value")) for match in matches]
+        values = {name: value.replace("\n", "").strip() for (name, value) in groups}
 
         try:
             if values["Package"] not in index:

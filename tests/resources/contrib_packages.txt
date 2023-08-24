@@ -33,6 +33,7 @@ Tag: interface::graphical, interface::x11, role::program, uitoolkit::gtk,
 Section: contrib/otherosfs
 Priority: optional
 Filename: pool/contrib/b/basilisk2/basilisk2_0.9.20180101-1+b2_amd64.deb
-Size: 758484
+Size:
+ 758484
 MD5sum: 0565034cd77e4b1d905681417d68ccb8
 SHA256: c664a3ddd2295c78681fa1232a38a8e5c15272648230f26b73636b85e008df0f
