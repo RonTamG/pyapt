@@ -7,13 +7,10 @@ def _parse_sources_list(sources_list):
     the list is found in /etc/apt/sources.list in debian distros
     """
     # remove comments
-    data = filter(
-        lambda line: not (line.startswith("#") or line == "\n"),
-        sources_list.strip().splitlines(),
-    )
-
+    lines = [line.strip() for line in sources_list.splitlines()]
+    lines = [line for line in lines if not (line.startswith("#") or line == "")]
     # split into parts
-    parts = [line.strip().split() for line in data]
+    parts = [line.strip().split() for line in lines]
 
     return parts
 
