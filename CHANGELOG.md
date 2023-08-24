@@ -1,3 +1,14 @@
+## [1.5.1](https://github.com/RonTamG/pyapt/compare/v1.5.0...v1.5.1) (2023-08-24)
+
+
+### Bug Fixes
+
+* added explicit encoding to Packages file write ([4cdfe04](https://github.com/RonTamG/pyapt/commit/4cdfe040158c131f1353853d9a23dfd902330c4b))
+* multiline packages values with no data on first line ([f7d9adb](https://github.com/RonTamG/pyapt/commit/f7d9adb1281498a1c0c2b23ea99407929a8f28e2))
+* parsing comments in sources list ([39cbff7](https://github.com/RonTamG/pyapt/commit/39cbff7885aa311be8aba7c3460451a6f13bd116))
+
+
+
 # [1.5.0](https://github.com/RonTamG/pyapt/compare/v1.4.0...v1.5.0) (2023-08-19)
 
 
@@ -35,20 +46,6 @@
 * added cleanup of install script ([6259705](https://github.com/RonTamG/pyapt/commit/625970566360352f61b8c8c4dbfd339645003892))
 * install script now uses apt install from local repo ([2ad0e3d](https://github.com/RonTamG/pyapt/commit/2ad0e3de146138659ec20bb687e3055c201e43df))
 * removed change to Package keys names in index ([0554468](https://github.com/RonTamG/pyapt/commit/05544689d78f49b58759a8fa14b7d768da368213))
-
-
-
-# [1.1.0](https://github.com/RonTamG/pyapt/compare/v1.0.0...v1.1.0) (2023-07-31)
-
-
-### Bug Fixes
-
-* fixed deprecation warnings in update regex ([f07ce9a](https://github.com/RonTamG/pyapt/commit/f07ce9a3d7f228a44a178e34d7a9fb5cde4f5c12))
-
-
-### Features
-
-* added linter formatter and type checking ([0e53ab5](https://github.com/RonTamG/pyapt/commit/0e53ab528d8a7365616679dd90343c58968f0e2b))
 
 
 
