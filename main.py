@@ -243,13 +243,19 @@ def enable_ansi_espace_codes_on_windows():
 
 
 def main():
-    args = create_parser().parse_args()
+    parser = create_parser()
+    args = parser.parse_args()
     temp_folder = args.temp_folder
     sources_list = args.sources_list
     with_recommended = not args.no_recommended
     with_dependencies = not args.no_dependencies
     with_pre_dependencies = not args.no_pre_dependencies
     with_required = args.with_required
+
+    if not Path(sources_list).exists():
+        parser.print_usage()
+        print(f"pyapt: error: the file {sources_list} is missing")
+        exit()
 
     enable_ansi_espace_codes_on_windows()
 
