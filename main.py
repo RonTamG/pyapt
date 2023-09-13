@@ -8,6 +8,12 @@ import sys
 import tarfile
 from pathlib import Path
 
+if sys.platform == "win32":
+    import ctypes
+else:
+    import termios
+
+
 from src.file_manager import FileManager
 from src.install import create_install_script
 from src.packages import get_package_dependencies, get_package_url
@@ -22,12 +28,63 @@ from src.update import (
 )
 
 DEFAULT_ARCHITECTURE = "amd64"
-CLEAR = "\x1b[0J"
-SAVE = "\x1b7"
-RESTORE = "\x1b8"
+CLEAR = "\033[0J"
+SAVE = "\0337"
+RESTORE = "\0338"
 
 
-def progressbar(it, count, prefix="", size=60, out=sys.stdout):  # Python3.6+
+def enable_ansi_escape_characters():
+    if sys.platform == "win32":
+        stdin_mode = ctypes.c_ulong()
+        stdout_mode = ctypes.c_ulong()
+        kernel32 = ctypes.windll.kernel32
+        kernel32.GetConsoleMode(kernel32.GetStdHandle(-10), ctypes.byref(stdin_mode))
+        kernel32.SetConsoleMode(kernel32.GetStdHandle(-10), 0)
+        kernel32.GetConsoleMode(kernel32.GetStdHandle(-11), ctypes.byref(stdout_mode))
+        kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
+        return stdin_mode, stdout_mode
+    else:
+        stdin_mode = termios.tcgetattr(sys.stdin)
+        _ = termios.tcgetattr(sys.stdin)
+        _[3] = _[3] & ~(termios.ECHO | termios.ICANON)
+        termios.tcsetattr(sys.stdin, termios.TCSAFLUSH, _)
+
+        return stdin_mode, None
+
+
+def disable_ansi_escape_characters(stdin_mode, stdout_mode):
+    if sys.platform == "win32":
+        kernel32 = ctypes.windll.kernel32
+        kernel32.SetConsoleMode(kernel32.GetStdHandle(-10), stdin_mode)
+        kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), stdout_mode)
+    else:
+        termios.tcsetattr(sys.stdin, termios.TCSAFLUSH, stdin_mode)
+
+
+def get_cursor_position():
+    """
+    returns terminal cursor position using ansi characters
+
+    modified from the following answer:
+
+    https://stackoverflow.com/questions/35526014
+    """
+    stdin_mode, stdout_mode = enable_ansi_escape_characters()
+
+    try:
+        result = ""
+        print("\033[6n", end="", flush=True)
+        while not (result := result + sys.stdin.read(1)).endswith("R"):
+            pass
+        match = re.match(r".*\[(?P<y>\d+);(?P<x>\d+)R", result)
+    finally:
+        disable_ansi_escape_characters(stdin_mode, stdout_mode)
+    if match:
+        return (int(match.group("x")), int(match.group("y")))
+    return (-1, -1)
+
+
+def progressbar(it, count, prefix="", size=60):  # Python3.6+
     """
     displays a progress bar for an iterator
 
@@ -39,23 +96,33 @@ def progressbar(it, count, prefix="", size=60, out=sys.stdout):  # Python3.6+
     https://stackoverflow.com/a/34482761
     """
 
-    def show(current, item=""):
-        print(RESTORE, end="", file=out, flush=True)
-        print(CLEAR, end="", file=out, flush=True)
-        print(SAVE, end="", file=out, flush=True)
+    def show(current, x, y, item=""):
+        print(f"\033[{y};{x}f", end="", flush=True)
+        print(CLEAR, end="", flush=True)
 
         filled = int(size * current / count)
         line = f"{prefix}[{'#' * filled}{('.' * (size - filled))}] {current}/{count} [{item}]"  # noqa: E501
-        print(line, end="", file=out, flush=True)
+        print(line, end="", flush=True)
+
         return len(line)
 
-    print(SAVE, end="", file=out, flush=True)
-    show(0)
-    for i, item in enumerate(it):
-        show(i + 1, str(item))
-        yield item
+    x, y = get_cursor_position()
+    max_x, max_y = os.get_terminal_size()
+    show(0, x, y)
+    if y == max_y:
+        offset = 0
+        for i, item in enumerate(it):
+            line_length = show(i + 1, x, y - offset, str(item))
+            offset += int(line_length / (max_x * (offset + 1)))
 
-    print("\n", flush=True, file=out)
+            yield item
+    else:
+        for i, item in enumerate(it):
+            show(i + 1, x, y, str(item))
+
+            yield item
+
+    print("\n", flush=True)
 
 
 def tar_dir(path, name):
@@ -226,22 +293,6 @@ def generate_packages_file(index, packages, temp_folder):
     Path(temp_folder, "packages", "Packages").write_text(data, encoding="utf-8")
 
 
-def enable_ansi_espace_codes_on_windows():
-    if os.name == "nt":
-        from ctypes import windll
-
-        STD_OUTPUT = -11
-        ENABLE_ECHO_INPUT = 4
-        ENABLE_LINE_INPUT = 2
-        ENABLE_PROCESS_INPUT = 1
-
-        kernel = windll.kernel32
-        kernel.SetConsoleMode(
-            kernel.GetStdHandle(STD_OUTPUT),
-            ENABLE_ECHO_INPUT + ENABLE_LINE_INPUT + ENABLE_PROCESS_INPUT,
-        )
-
-
 def main():
     parser = create_parser()
     args = parser.parse_args()
@@ -256,8 +307,6 @@ def main():
         parser.print_usage()
         print(f"pyapt: error: the file {sources_list} is missing")
         exit()
-
-    enable_ansi_espace_codes_on_windows()
 
     index = apt_update(sources_list, temp_folder)
 
