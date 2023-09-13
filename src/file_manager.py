@@ -30,7 +30,7 @@ class FileManager:
 
         request = urllib.request.Request(
             url,
-            headers={"User-Agent": "Mozilla"},
+            headers={"User-Agent": "Debian APT-HTTP"},
         )
 
         with urllib.request.urlopen(request) as response:
