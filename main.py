@@ -60,7 +60,7 @@ def progressbar(it, count, prefix="", size=60, out=sys.stdout):  # Python3.6+
 
 def tar_dir(path, name):
     def set_permissions(tarinfo):
-        tarinfo.mode = 0o655
+        tarinfo.mode = 0o755
         return tarinfo
 
     with tarfile.open(name, "w:gz") as tar:
