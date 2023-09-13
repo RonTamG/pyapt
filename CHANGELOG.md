@@ -1,3 +1,20 @@
+# [1.6.0](https://github.com/RonTamG/pyapt/compare/v1.5.1...v1.6.0) (2023-09-13)
+
+
+### Bug Fixes
+
+* added run permissions to owner of install file in generated tar.gz file ([a5711ca](https://github.com/RonTamG/pyapt/commit/a5711ca17686763b019a1a5e5d98232d1871b646))
+* progress bar correctly removes overflowing lines ([bcc0283](https://github.com/RonTamG/pyapt/commit/bcc02837ae11493b0a1af71526a151cd0ebc0e9f))
+
+
+### Features
+
+* added error message on missing sources list file ([57d9317](https://github.com/RonTamG/pyapt/commit/57d9317b85e318f4f88f7c83cd733583e7a52dda))
+* changed user agent to debian apt ([0c84d07](https://github.com/RonTamG/pyapt/commit/0c84d0797674cb6b0ce74a9fa3efa759805bbfb5))
+* fix added ansi escape character support in windows console ([9cf8b1b](https://github.com/RonTamG/pyapt/commit/9cf8b1b4573ffa513b914d423cf10b0b9b126ca3))
+
+
+
 ## [1.5.1](https://github.com/RonTamG/pyapt/compare/v1.5.0...v1.5.1) (2023-08-24)
 
 
@@ -35,17 +52,6 @@
 
 * added execute permissions to install.sh file in tar ([cb6bb33](https://github.com/RonTamG/pyapt/commit/cb6bb339f1534fa786db0c750c940c9336f80c8b))
 * install script uses new list in sources.list.d and updates only it ([c9094c7](https://github.com/RonTamG/pyapt/commit/c9094c779807f1d28192ccb2ffc08223eee24be1))
-
-
-
-# [1.2.0](https://github.com/RonTamG/pyapt/compare/v1.1.0...v1.2.0) (2023-08-06)
-
-
-### Features
-
-* added cleanup of install script ([6259705](https://github.com/RonTamG/pyapt/commit/625970566360352f61b8c8c4dbfd339645003892))
-* install script now uses apt install from local repo ([2ad0e3d](https://github.com/RonTamG/pyapt/commit/2ad0e3de146138659ec20bb687e3055c201e43df))
-* removed change to Package keys names in index ([0554468](https://github.com/RonTamG/pyapt/commit/05544689d78f49b58759a8fa14b7d768da368213))
 
 
 
