@@ -226,6 +226,22 @@ def generate_packages_file(index, packages, temp_folder):
     Path(temp_folder, "packages", "Packages").write_text(data, encoding="utf-8")
 
 
+def enable_ansi_espace_codes_on_windows():
+    if os.name == "nt":
+        from ctypes import windll
+
+        STD_OUTPUT = -11
+        ENABLE_ECHO_INPUT = 4
+        ENABLE_LINE_INPUT = 2
+        ENABLE_PROCESS_INPUT = 1
+
+        kernel = windll.kernel32
+        kernel.SetConsoleMode(
+            kernel.GetStdHandle(STD_OUTPUT),
+            ENABLE_ECHO_INPUT + ENABLE_LINE_INPUT + ENABLE_PROCESS_INPUT,
+        )
+
+
 def main():
     args = create_parser().parse_args()
     temp_folder = args.temp_folder
@@ -234,6 +250,8 @@ def main():
     with_dependencies = not args.no_dependencies
     with_pre_dependencies = not args.no_pre_dependencies
     with_required = args.with_required
+
+    enable_ansi_espace_codes_on_windows()
 
     index = apt_update(sources_list, temp_folder)
 
