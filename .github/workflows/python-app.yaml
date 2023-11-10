@@ -9,7 +9,6 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      - 'tests/*'
       - 'src/*'
       - 'main.py'
       - '.github/workflows/*'
