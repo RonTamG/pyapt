@@ -1,82 +1,61 @@
-import os.path
+from pathlib import Path
 
 from src.packages import get_package_dependencies, get_package_url
-from src.update import add_apt_source_field, generate_index_dictionary
+from src.update import (
+    add_apt_source_field,
+    add_virtual_indexes,
+    generate_index_dictionary,
+)
 
 
-def test_get_package_dependencies_without_recommended():
-    expected = ["libc6", "libcrypt1", "libgcc-s1"]
+def test_package_dependencies_collection_without_recommended_packages_is_successful():
+    index = valid_index()
 
-    with open(
-        os.path.join("tests", "resources", "libc6_packages.txt"), "r", encoding="utf-8"
-    ) as index_file:
-        index_data = index_file.read()
+    result = get_package_dependencies("python3", index, with_recommended=False)
 
-    index = generate_index_dictionary(index_data)
-    result = get_package_dependencies("libc6", index, with_recommended=False)
-
-    assert len(result) == 3
-    assert all([pack in result for pack in expected])
+    assert len(result) == 33
 
 
-def test_get_package_dependencies_with_required_priority():
-    expected = ["gcc-10-base", "libc6", "libcrypt1", "libgcc-s1"]
+def test_package_dependencies_collection_with_required_packages_is_successful():
+    index = valid_index()
 
-    with open(
-        os.path.join("tests", "resources", "libc6_packages.txt"), "r", encoding="utf-8"
-    ) as index_file:
-        index_data = index_file.read()
+    result = get_package_dependencies("python3", index, with_required=True)
 
-    index = generate_index_dictionary(index_data)
-    result = get_package_dependencies(
-        "libc6", index, with_recommended=False, with_required=True
-    )
-
-    assert len(result) == 4
-    assert all([pack in result for pack in expected])
+    assert len(result) == 104
 
 
-def test_get_package_dependencies_without_pre_dependencies():
-    with open(
-        os.path.join("tests", "resources", "pre_depends_package.txt"),
-        "r",
-        encoding="utf-8",
-    ) as index_file:
-        index_data = index_file.read()
+def test_package_dependencies_collection_without_pre_dependencies_is_successful():
+    index = valid_index()
 
-    index = generate_index_dictionary(index_data)
-    result = get_package_dependencies(
-        "libc6", index, with_recommended=False, with_required=True
-    )
-    assert "predep" in result
+    result = get_package_dependencies("python3", index, with_pre_dependencies=False)
 
-    result = get_package_dependencies(
-        "libc6",
-        index,
-        with_pre_dependencies=False,
-        with_recommended=False,
-        with_required=True,
-    )
-    assert "predep" not in result
+    assert len(result) == 42
 
 
-def test_get_package_url():
-    expected = [
-        "http://deb.debian.org/debian/pool/main/g/gcc-10/gcc-10-base_10.2.1-6_amd64.deb",
-        "http://deb.debian.org/debian/pool/main/g/glibc/libc6_2.31-13+deb11u5_amd64.deb",
-        "http://deb.debian.org/debian/pool/main/libx/libxcrypt/libcrypt1_4.4.18-4_amd64.deb",
-        "http://deb.debian.org/debian/pool/main/g/gcc-10/libgcc-s1_10.2.1-6_amd64.deb",
-    ]
+def test_package_download_url_generation_is_successfull():
+    source = "http://deb.debian.org/debian"
+    index = valid_index_with_apt_source(source)
+    expected = "http://deb.debian.org/debian/./python3_3.11.4-5+b1_amd64.deb"
 
-    with open(
-        os.path.join("tests", "resources", "libc6_packages.txt"), "r", encoding="utf-8"
-    ) as index_file:
-        index_data = index_file.read()
-    index = generate_index_dictionary(index_data)
-    add_apt_source_field(index, "http://deb.debian.org/debian")
-
-    packages = ["gcc-10-base", "libc6", "libcrypt1", "libgcc-s1"]
-
-    result = [get_package_url(name, index) for name in packages]
+    result = get_package_url("python3", index)
 
     assert result == expected
+
+
+def valid_index():
+    with open(
+        Path("tests", "resources", "python_Packages"), "r", encoding="utf-8"
+    ) as index_file:
+        index_data = index_file.read()
+
+    index = generate_index_dictionary(index_data)
+    add_virtual_indexes(index)
+
+    return index
+
+
+def valid_index_with_apt_source(source):
+    index = valid_index()
+    add_apt_source_field(index, source)
+
+    return index
