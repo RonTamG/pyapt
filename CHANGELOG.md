@@ -1,3 +1,18 @@
+# [1.7.0](https://github.com/RonTamG/pyapt/compare/v1.6.1...v1.7.0) (2023-11-11)
+
+
+### Bug Fixes
+
+* installs script now works in directories with spaces in name ([971e305](https://github.com/RonTamG/pyapt/commit/971e3053e05c12d63b521021859f78e649a1f2e6))
+
+
+### Features
+
+* added -y option for install script to auto accept apt install command ([3a6f192](https://github.com/RonTamG/pyapt/commit/3a6f1927a9c0ec43755ab91e477bac33553b4eb2))
+* added option to remove progress bar ([859eba1](https://github.com/RonTamG/pyapt/commit/859eba1b6dcef941ede9fa0121443b5ab95f94b7))
+
+
+
 ## [1.6.1](https://github.com/RonTamG/pyapt/compare/v1.6.0...v1.6.1) (2023-11-11)
 
 
@@ -43,15 +58,6 @@
 
 * added support for gzip compressed index files ([b75743c](https://github.com/RonTamG/pyapt/commit/b75743c3df1a8fdb49d550df24ea0c97d98b8377))
 * removed unused download of InRelease files ([e8a0d92](https://github.com/RonTamG/pyapt/commit/e8a0d921ad3eedf6515e50965fec7e203f7839f5))
-
-
-
-# [1.4.0](https://github.com/RonTamG/pyapt/compare/v1.3.0...v1.4.0) (2023-08-09)
-
-
-### Features
-
-* added new merged script release build ([62cc958](https://github.com/RonTamG/pyapt/commit/62cc9582da25ca7b9d7d27f5245e0b1b087efba9))
 
 
 
