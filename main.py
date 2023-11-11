@@ -47,7 +47,7 @@ def read(path):
         return path.read_text()
 
 
-def apt_update(sources_list_path, temp_folder):
+def apt_update(sources_list_path, temp_folder, enable_progress_bar=True):
     """
     retrieve the required files and create an index of the packages
     """
@@ -60,11 +60,9 @@ def apt_update(sources_list_path, temp_folder):
     # download index files and save them
     manager = FileManager(temp_folder)
     get_urls = (manager.get_update_file(url) for url in urls)
-    saved = [
-        name
-        for name in progressbar(get_urls, len(urls), prefix="Update: ")
-        if name != ""
-    ]
+    if enable_progress_bar:
+        get_urls = progressbar(get_urls, len(urls), prefix="Update: ")
+    saved = [name for name in get_urls if name != ""]
 
     # create an index dictionary from the index files
     index_files = (path for path in saved if path.stem.endswith("Packages"))
@@ -94,6 +92,7 @@ def download_package(
     with_recommended=True,
     with_pre_dependencies=True,
     with_required=False,
+    enable_progress_bar=True,
 ):
     """
     download a package with all it's dependencies
@@ -112,11 +111,10 @@ def download_package(
     # download index files and save them
     manager = FileManager(temp_folder)
     get_urls = (manager.get_package_file(url) for url in urls)
-    saved = [
-        name
-        for name in progressbar(get_urls, len(urls), prefix=f"{name}: ")
-        if name != ""
-    ]
+
+    if enable_progress_bar:
+        get_urls = progressbar(get_urls, len(urls), prefix=f"{name}: ")
+    saved = [name for name in get_urls if name != ""]
 
     return (saved, packages)
 
@@ -173,6 +171,11 @@ def create_parser():
         action="store_true",
         help="do download packages with priority required",
     )
+    parser.add_argument(
+        "--no-progress-bar",
+        action="store_true",
+        help="remove progress bar",
+    )
 
     return parser
 
@@ -196,13 +199,14 @@ def main():
     with_dependencies = not args.no_dependencies
     with_pre_dependencies = not args.no_pre_dependencies
     with_required = args.with_required
+    enable_progress_bar = not args.no_progress_bar
 
     if not Path(sources_list).exists():
         parser.print_usage()
         print(f"pyapt: error: the file {sources_list} is missing")
         exit()
 
-    index = apt_update(sources_list, temp_folder)
+    index = apt_update(sources_list, temp_folder, enable_progress_bar)
 
     for name in args.packages:
         _, packages = download_package(
@@ -213,6 +217,7 @@ def main():
             with_recommended,
             with_pre_dependencies,
             with_required,
+            enable_progress_bar,
         )
         generate_packages_file(index, packages, temp_folder)
         write_install_script(name, temp_folder)
