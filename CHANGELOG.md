@@ -1,3 +1,13 @@
+## [1.6.1](https://github.com/RonTamG/pyapt/compare/v1.6.0...v1.6.1) (2023-11-11)
+
+
+### Bug Fixes
+
+* package dependency collection now ignores missing recommended packages ([42eb2b3](https://github.com/RonTamG/pyapt/commit/42eb2b366cf3899a163af526b87b50546ba94cfd))
+* removed deletion of provides field in virtual package addition ([2f5cda4](https://github.com/RonTamG/pyapt/commit/2f5cda4070e4eae56f00d4d95a74e2f114b3f8b4))
+
+
+
 # [1.6.0](https://github.com/RonTamG/pyapt/compare/v1.5.1...v1.6.0) (2023-09-13)
 
 
@@ -42,16 +52,6 @@
 ### Features
 
 * added new merged script release build ([62cc958](https://github.com/RonTamG/pyapt/commit/62cc9582da25ca7b9d7d27f5245e0b1b087efba9))
-
-
-
-# [1.3.0](https://github.com/RonTamG/pyapt/compare/v1.2.0...v1.3.0) (2023-08-07)
-
-
-### Features
-
-* added execute permissions to install.sh file in tar ([cb6bb33](https://github.com/RonTamG/pyapt/commit/cb6bb339f1534fa786db0c750c940c9336f80c8b))
-* install script uses new list in sources.list.d and updates only it ([c9094c7](https://github.com/RonTamG/pyapt/commit/c9094c779807f1d28192ccb2ffc08223eee24be1))
 
 
 
