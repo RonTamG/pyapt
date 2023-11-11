@@ -101,10 +101,10 @@ def download_package(
     packages = get_package_dependencies(
         name,
         index,
-        with_dependencies,
-        with_recommended,
-        with_pre_dependencies,
-        with_required,
+        with_dependencies=with_dependencies,
+        with_recommended=with_recommended,
+        with_pre_dependencies=with_pre_dependencies,
+        with_required=with_required,
     )
 
     urls = [get_package_url(name, index) for name in packages]

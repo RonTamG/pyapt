@@ -1,4 +1,3 @@
-import logging
 import posixpath
 
 from src.update import get_index_name
@@ -36,8 +35,9 @@ def get_pre_dependency_list(package):
 
 
 def get_package_dependencies(
-    name,
-    packages,
+    current,
+    index,
+    packages=None,
     with_dependencies=True,
     with_recommended=True,
     with_pre_dependencies=True,
@@ -49,42 +49,74 @@ def get_package_dependencies(
     by default includes all pre-dependencies, dependencies and recommended packages
     these are the defaults that 'apt install' has
     """  # noqa: E501
-    dependencies = [name]
-    i = 0
-    while i < len(dependencies):
-        name = get_index_name(dependencies[i])
+    current = get_index_name(current)
 
+    if packages is None:
+        packages = []
+
+    if current not in index:
+        raise KeyError(current)
+
+    if index[current]["Priority"] in ["required", "important"] and (not with_required):
+        return None
+
+    if current in packages:
+        return None
+    else:
+        packages.append(current)
+
+    if with_pre_dependencies:
         try:
-            pack = packages[name]
+            [
+                get_package_dependencies(
+                    dep,
+                    index,
+                    packages,
+                    with_dependencies,
+                    with_recommended,
+                    with_pre_dependencies,
+                    with_required,
+                )
+                for dep in get_pre_dependency_list(index[current])
+            ]
         except KeyError:
-            logging.error(f"failed to find package {name}")
-            i += 1
-            continue
+            raise KeyError(current)
 
-        if with_dependencies:
-            deps = [get_index_name(dep) for dep in get_dependency_list(pack)]
-            extend_unique(dependencies, deps)
-
-        if with_recommended:
-            recommended = [get_index_name(dep) for dep in get_recommended_list(pack)]
-            extend_unique(dependencies, recommended)
-
-        if with_pre_dependencies:
-            pre_dependencies = [
-                get_index_name(dep) for dep in get_pre_dependency_list(pack)
+    if with_dependencies:
+        try:
+            [
+                get_package_dependencies(
+                    dep,
+                    index,
+                    packages,
+                    with_dependencies,
+                    with_recommended,
+                    with_pre_dependencies,
+                    with_required,
+                )
+                for dep in get_dependency_list(index[current])
             ]
-            extend_unique(dependencies, pre_dependencies)
+        except KeyError:
+            raise KeyError(current)
 
-        if not with_required:
-            dependencies = [
-                dep
-                for dep in dependencies
-                if packages[dep]["Priority"] not in ["required", "important"]
+    if with_recommended:
+        try:
+            [
+                get_package_dependencies(
+                    dep,
+                    index,
+                    packages,
+                    with_dependencies,
+                    with_recommended,
+                    with_pre_dependencies,
+                    with_required,
+                )
+                for dep in get_recommended_list(index[current])
             ]
+        except KeyError:
+            pass
 
-        i += 1
-
-    return dependencies
+    return packages
 
 
 def get_package_url(name, index):

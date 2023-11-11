@@ -40,6 +40,14 @@ def test_package_dependencies_collection_without_pre_dependencies_is_successful(
     assert len(result) == 42
 
 
+def test_package_dependencies_collection_ignores_missing_recommended_packages():
+    index = index_missing_ca_certificates_package()
+
+    result = get_package_dependencies("python3", index)
+
+    assert len(result) == 41
+
+
 def test_package_download_url_generation_is_successfull():
     source = "http://deb.debian.org/debian"
     index = valid_index_with_apt_source(source)
@@ -65,5 +73,12 @@ def valid_index():
 def valid_index_with_apt_source(source):
     index = valid_index()
     add_apt_source_field(index, source)
+
+    return index
+
+
+def index_missing_ca_certificates_package():
+    index = valid_index()
+    index.pop("ca-certificates")
 
     return index
