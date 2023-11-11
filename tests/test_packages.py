@@ -8,6 +8,14 @@ from src.update import (
 )
 
 
+def test_package_dependencies_collection_with_dependencies_and_recommended_is_successfull():  # noqa: E501
+    index = valid_index()
+
+    result = get_package_dependencies("python3", index)
+
+    assert len(result) == 43
+
+
 def test_package_dependencies_collection_without_recommended_packages_is_successful():
     index = valid_index()
 
