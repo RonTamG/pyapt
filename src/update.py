@@ -84,8 +84,6 @@ def add_virtual_indexes(index):
 
     for values in index.values():
         provides = get_provides_list(values)
-        if "Provides" in values:
-            del values["Provides"]
         for virtual_index in provides:
             virtual_packages[get_index_name(virtual_index)] = values
 
