@@ -6,6 +6,7 @@ import re
 import shutil
 import sys
 import tarfile
+from functools import reduce
 from pathlib import Path
 
 if sys.platform == "win32":
@@ -21,7 +22,7 @@ from src.sources_list import SourcesList
 from src.update import (
     add_apt_source_field,
     add_virtual_indexes,
-    dpkg_version_compare,
+    combine_indexes,
     generate_index_dictionary,
     get_apt_sources,
     index_to_package_file_format,
@@ -180,13 +181,7 @@ def apt_update(sources_list_path, temp_folder):
     )
 
     # combine all indexes into one and add virtual packages
-    full_index = {}
-    for index in indexes:
-        for key, value in index.items():
-            if key not in full_index:
-                full_index[key] = value
-            elif dpkg_version_compare(full_index[key]["Version"], value["Version"]) < 0:
-                full_index[key] = value
+    full_index = reduce(combine_indexes, indexes)
     full_index = add_virtual_indexes(full_index)
 
     return full_index

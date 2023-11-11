@@ -188,3 +188,17 @@ def dpkg_version_compare(a, b):
 
 def index_to_package_file_format(package):
     return "\n".join([f"{key}: {value}" for key, value in package.items()])
+
+
+def combine_indexes(index_1, index_2):
+    """
+    combine two indexes into one.
+    in case of conflicting packages, keep package with latest version.
+    """
+    for key, value in index_2.items():
+        if key not in index_1:
+            index_1[key] = value
+        elif dpkg_version_compare(index_1[key]["Version"], value["Version"]) < 0:
+            index_1[key] = value
+
+    return index_1

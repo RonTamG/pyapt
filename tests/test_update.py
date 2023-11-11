@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 import pytest
@@ -6,6 +5,7 @@ import pytest
 from src.update import (
     add_apt_source_field,
     add_virtual_indexes,
+    combine_indexes,
     dpkg_version_compare,
     generate_index_dictionary,
     get_apt_sources,
@@ -110,31 +110,16 @@ def test_index_data_with_multiline_fields_combines_the_lines():
     assert result == "python3.11 (>= 3.11.4-1~), libpython3-stdlib (= 3.11.4-5+b1)"
 
 
-def test_generate_index_dictionary_with_multiple_versions():
-    expected_packages = ["genius", "genius-common", "genius-dev", "gnome-genius"]
-    test_indexes = ["main_packages.txt", "main_packages_other_versions.txt"]
+def test_multiple_indexes_with_same_package_when_combined_keep_latest_version():
+    index_data_1 = genius_version_1_package_data()
+    index_data_2 = genius_version_2_package_data()
 
-    result_packages = {}
+    index_1 = generate_index_dictionary(index_data_1)
+    index_2 = generate_index_dictionary(index_data_2)
 
-    for path in test_indexes:
-        with open(os.path.join("tests", "resources", path), "r") as index_file:
-            data = index_file.read()
+    result = combine_indexes(index_1, index_2)
 
-        for key, value in generate_index_dictionary(data).items():
-            if key not in result_packages:
-                result_packages[key] = value
-            elif (
-                dpkg_version_compare(result_packages[key]["Version"], value["Version"])
-                < 0
-            ):
-                result_packages[key] = value
-
-    assert result_packages["gnome-genius"]["Version"] == "2.0.25-2"
-    assert result_packages["genius"]["Version"] == "2.0.25-2"
-
-    result = [pack in result_packages for pack in expected_packages]
-    assert result != []
-    assert all(result)
+    assert result["genius"]["Version"] == "2.0.25-2"
 
 
 def test_index_can_have_virtual_packages_added_according_to_provider_fields():
