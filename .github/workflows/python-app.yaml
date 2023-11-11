@@ -19,7 +19,7 @@ permissions:
 
 jobs:
   test:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
@@ -39,6 +39,8 @@ jobs:
       run: mypy --check .
     - name: Test
       run: pytest
+    - name: Test git download and install
+      run: /bin/bash ./tests/acceptance_tests/install_git.sh --no-progress-bar
     
   build_executables:
     needs: test
