@@ -1,7 +1,7 @@
 from src.file_manager import url_into_saved_file_name
 
 
-def test_url_into_saved_file_name():
+def test_url_turn_into_saved_file_name_is_successful():
     urls = [
         "http://deb.debian.org/debian/dists/bullseye/InRelease",
         "http://deb.debian.org/debian/dists/bullseye/main/binary-amd64/Packages.xz",

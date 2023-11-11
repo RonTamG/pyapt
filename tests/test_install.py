@@ -1,7 +1,7 @@
 from src.install import create_install_script
 
 
-def test_create_install_script():
+def test_install_script_generation_is_successfull():
     expected = """\
 #!/bin/bash
 
