@@ -11,8 +11,12 @@ else
     auto_install=""
 fi
 
+# get current working directory and escape spaces
+cwd=`pwd`
+cwd=${{cwd// /%20}}
+
 # set local repo
-echo deb [trusted=yes] file:`pwd`/packages/ ./ > /etc/apt/sources.list.d/pyapt.list
+echo deb [trusted=yes] file:"${{cwd}}/packages/" ./ > /etc/apt/sources.list.d/pyapt.list
 
 # update apt sources
 apt-get update -o Dir::Etc::sourcelist="sources.list.d/pyapt.list" \\
