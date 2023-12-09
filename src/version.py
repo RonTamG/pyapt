@@ -17,6 +17,12 @@ class Version:
         else:
             raise NotImplementedError
 
+    def __lt__(self, other) -> bool:
+        if isinstance(other, Version):
+            return self._compare(other) <= -1
+        else:
+            raise NotImplementedError
+
     def _compare(self, other) -> int:
         """
         compare 2 debain version strings
