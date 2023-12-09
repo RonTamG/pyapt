@@ -14,3 +14,16 @@ from src.version import Version
 )
 def test_should_compare_equal(a, b):
     assert Version(a) == Version(b)
+
+
+@pytest.mark.parametrize(
+    "a, b",
+    [
+        ("1:0-0", "0:0-0"),
+        ("0:b-0", "0:a-0"),
+        ("11.1+deb11u6", "11.0+deb11u6"),
+        ("0:0-b", "0:0-a"),
+    ],
+)
+def test_should_compare_greater_than(a, b):
+    assert Version(a) > Version(b)
