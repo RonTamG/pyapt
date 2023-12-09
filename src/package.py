@@ -1,5 +1,7 @@
 import re
 
+from src.version import Version
+
 
 class Package:
     def __init__(self, package_data) -> None:
@@ -10,3 +12,4 @@ class Package:
         values = {name: value.replace("\n", "").strip() for (name, value) in groups}
 
         self.name = values["Package"]
+        self.version = Version(values["Version"])

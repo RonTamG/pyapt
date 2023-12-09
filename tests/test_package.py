@@ -1,6 +1,7 @@
 # ruff: noqa: E501
 
 from src.package import Package
+from src.version import Version
 
 
 def test_should_have_a_name():
@@ -9,6 +10,14 @@ def test_should_have_a_name():
     package = Package(package_data)
 
     assert package.name == "python3"
+
+
+def test_should_have_a_version():
+    package_data = valid_package_data()
+
+    package = Package(package_data)
+
+    assert package.version == Version("3.11.4-5+b1")
 
 
 def valid_package_data():
