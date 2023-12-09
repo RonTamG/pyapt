@@ -19,6 +19,14 @@ def test_should_include_all_packages_in_index_file():
     assert len(index) == 2
 
 
+def test_should_search_packages_by_name():
+    index = valid_index()
+
+    package = index.search("python3")
+
+    assert package.name == "python3"
+
+
 def valid_index_file():
     return """Package: python3
 Source: python3-defaults (3.11.4-5)
@@ -86,3 +94,7 @@ Tag: protocol::ssl, role::app-data, security::authentication
 Section: misc
 Priority: standard
 Filename: ./ca-certificates_20230311_all.deb"""
+
+
+def valid_index():
+    return Index(valid_index_file())

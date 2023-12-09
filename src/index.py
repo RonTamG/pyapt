@@ -10,3 +10,6 @@ class Index:
 
     def __len__(self) -> int:
         return len(self.packages)
+
+    def search(self, name) -> Package:
+        return self.packages[name]
