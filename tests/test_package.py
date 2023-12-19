@@ -28,6 +28,14 @@ def test_should_have_an_architecture_field():
     assert package.architecture == "amd64"
 
 
+def test_should_have_a_maintainer_field():
+    package_data = valid_package_data()
+
+    package = Package(package_data)
+
+    assert package.maintainer == "Matthias Klose <doko@debian.org>"
+
+
 def valid_package_data():
     return """Package: python3
 Source: python3-defaults (3.11.4-5)
