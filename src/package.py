@@ -13,3 +13,4 @@ class Package:
 
         self.name = values["Package"]
         self.version = Version(values["Version"])
+        self.architecture = values["Architecture"]

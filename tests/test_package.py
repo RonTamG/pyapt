@@ -20,6 +20,14 @@ def test_should_have_a_version():
     assert package.version == Version("3.11.4-5+b1")
 
 
+def test_should_have_an_architecture_field():
+    package_data = valid_package_data()
+
+    package = Package(package_data)
+
+    assert package.architecture == "amd64"
+
+
 def valid_package_data():
     return """Package: python3
 Source: python3-defaults (3.11.4-5)
