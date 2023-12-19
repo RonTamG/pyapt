@@ -36,6 +36,17 @@ def test_should_have_a_maintainer_field():
     assert package.maintainer == "Matthias Klose <doko@debian.org>"
 
 
+def test_should_have_a_description():
+    package_data = valid_package_data()
+
+    package = Package(package_data)
+
+    assert (
+        package.description
+        == "interactive high-level object-oriented language (default python3 version) Python, the high-level, interactive object oriented language,"
+    )
+
+
 def valid_package_data():
     return """Package: python3
 Source: python3-defaults (3.11.4-5)

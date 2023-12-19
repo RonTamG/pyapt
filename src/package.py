@@ -15,3 +15,4 @@ class Package:
         self.version = Version(values["Version"])
         self.architecture = values["Architecture"]
         self.maintainer = values["Maintainer"]
+        self.description = values["Description"]
