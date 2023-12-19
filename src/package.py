@@ -16,3 +16,30 @@ class Package:
         self.architecture = values["Architecture"]
         self.maintainer = values["Maintainer"]
         self.description = values["Description"]
+
+    def __equ__(self, other) -> bool:
+        if isinstance(other, Package):
+            if self.name == other.name:
+                return self.version == other.version
+            else:
+                return True
+        else:
+            raise NotImplementedError
+
+    def __gt__(self, other) -> bool:
+        if isinstance(other, Package):
+            if self.name == other.name:
+                return self.version > other.version
+            else:
+                return self.name > other.name
+        else:
+            raise NotImplementedError
+
+    def __lt__(self, other) -> bool:
+        if isinstance(other, Package):
+            if self.name == other.name:
+                return self.version < other.version
+            else:
+                return self.name < other.name
+        else:
+            raise NotImplementedError

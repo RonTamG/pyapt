@@ -47,6 +47,24 @@ def test_should_have_a_description():
     )
 
 
+def test_should_be_compareable_by_name():
+    package_1 = Package(valid_package_data())
+    package_2 = Package(valid_package_data_with_different_name())
+
+    assert package_1 > package_2
+    assert package_2 < package_1
+    assert package_1 != package_2
+
+
+def test_should_be_compareable_by_version_if_names_are_equal():
+    package_1 = Package(valid_package_data())
+    package_2 = Package(valid_package_data_with_greater_version())
+
+    assert package_1 < package_2
+    assert package_2 > package_1
+    assert package_1 != package_2
+
+
 def valid_package_data():
     return """Package: python3
 Source: python3-defaults (3.11.4-5)
@@ -70,3 +88,11 @@ Tag: devel::interpreter, devel::lang:python, devel::library, implemented-in::c, 
 Section: python
 Priority: optional
 Filename: ./python3_3.11.4-5+b1_amd64.deb"""
+
+
+def valid_package_data_with_greater_version():
+    return valid_package_data().replace("Version: 3.11.4-5+b1", "Version: 4.11.4-5+b1")
+
+
+def valid_package_data_with_different_name():
+    return valid_package_data().replace("Package: python3", "Package: ca-certificates")
