@@ -1,6 +1,7 @@
 # ruff: noqa: E501
 
 from src.index import Index
+from src.version import Version
 
 
 def test_index_should_include_package_in_index_file():
@@ -33,6 +34,14 @@ def test_should_contain_multiple_package_versions():
     index = Index(index_file)
 
     assert len(index.packages.get("python3")) == 2
+
+
+def test_search_by_name_should_return_latest_version():
+    index_file = valid_index_file_with_multiple_version_of_package()  # noqa: F821
+
+    index = Index(index_file)
+
+    assert index.search("python3").version == Version("3.12.4")
 
 
 def valid_index_file():

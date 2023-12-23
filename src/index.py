@@ -1,3 +1,4 @@
+from operator import itemgetter
 from typing import Dict
 
 from src.package import Package
@@ -23,5 +24,9 @@ class Index:
         if package.name in self.packages:
             versions = self.packages[package.name]
             versions[package.version] = package
+            self.packages[package.name] = {
+                k: v
+                for k, v in sorted(versions.items(), key=itemgetter(1), reverse=True)
+            }
         else:
             self.packages[package.name] = {package.version: package}
