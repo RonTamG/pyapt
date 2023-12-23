@@ -46,3 +46,14 @@ def test_should_compare_greater_than(a, b):
 )
 def test_should_compare_less_than(a, b):
     assert Version(a) < Version(b)
+
+
+def test_should_have_equal_hashes_for_equal_versions():
+    version = "11.1+deb11u6"
+    assert hash(Version(version)) == hash(Version(version))
+
+
+def test_should_have_different_hashes_for_different_versions():
+    version_1 = "11.1+deb11u6"
+    version_2 = "22.2+deb11u6"
+    assert hash(Version(version_1)) != hash(Version(version_2))

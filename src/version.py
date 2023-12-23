@@ -3,7 +3,11 @@ import re
 
 class Version:
     def __init__(self, version) -> None:
+        self.text = version
         self.epoch, self.upstream, self.revision = split_debian_version(version)
+
+    def __hash__(self) -> int:
+        return hash(self.text)
 
     def __eq__(self, other) -> bool:
         if isinstance(other, Version):
