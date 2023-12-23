@@ -27,6 +27,14 @@ def test_should_search_packages_by_name():
     assert package.name == "python3"
 
 
+def test_should_contain_multiple_package_versions():
+    index_file = valid_index_file_with_multiple_version_of_package()  # noqa: F821
+
+    index = Index(index_file)
+
+    assert len(index.packages.get("python3")) == 2
+
+
 def valid_index_file():
     return """Package: python3
 Source: python3-defaults (3.11.4-5)
@@ -94,6 +102,15 @@ Tag: protocol::ssl, role::app-data, security::authentication
 Section: misc
 Priority: standard
 Filename: ./ca-certificates_20230311_all.deb"""
+
+
+def valid_index_file_with_multiple_version_of_package():
+    return "\n\n".join(
+        [
+            valid_index_file(),
+            valid_index_file().replace("Version: 3.11.4-5+b1", "Version: 3.12.4"),
+        ]
+    )
 
 
 def valid_index():
