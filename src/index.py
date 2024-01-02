@@ -26,12 +26,26 @@ class Index:
         if (
             match := re.match(r"(\S+)(?: \((<<|<=|=|>=|>>) (\S+)\))?", name)
         ) is not None:
-            package, operation, version = match.groups()
+            package, operation, target_version = match.groups()
+
+            package_versions = self.packages[package]
+
             match operation:
                 case None:
-                    result = list(self.packages[package].values())[LATEST_INDEX]
+                    result = list(package_versions.values())[LATEST_INDEX]
                 case "=":
-                    result = self.packages[package][Version(version)]
+                    target_version = Version(target_version)
+                    result = package_versions[target_version]
+                case ">>":
+                    target_version = Version(target_version)
+                    result = next(
+                        (
+                            package
+                            for version, package in package_versions.items()
+                            if version > target_version
+                        ),
+                        None,
+                    )
 
         return result
 

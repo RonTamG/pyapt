@@ -52,6 +52,14 @@ def test_should_search_by_name_and_version():
     assert index.search("python3 (= 3.11.4-5+b1)").version == Version("3.11.4-5+b1")
 
 
+def test_should_search_by_later_version():
+    index_file = valid_index_file_with_multiple_version_of_package()  # noqa: F821
+
+    index = Index(index_file)
+
+    assert index.search("python3 (>> 3.11.4-5+b1)").version == Version("3.12.4")
+
+
 def valid_index_file():
     return """Package: python3
 Source: python3-defaults (3.11.4-5)
