@@ -46,6 +46,16 @@ class Index:
                         ),
                         None,
                     )
+                case "<<":
+                    target_version = Version(target_version)
+                    result = next(
+                        (
+                            package
+                            for version, package in package_versions.items()
+                            if version < target_version
+                        ),
+                        None,
+                    )
 
         return result
 

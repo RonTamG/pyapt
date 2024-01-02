@@ -33,7 +33,7 @@ def test_should_contain_multiple_package_versions():
 
     index = Index(index_file)
 
-    assert len(index.packages.get("python3")) == 2
+    assert len(index.packages.get("python3")) == 3
 
 
 def test_search_by_name_should_return_latest_version():
@@ -58,6 +58,14 @@ def test_should_search_by_later_version():
     index = Index(index_file)
 
     assert index.search("python3 (>> 3.11.4-5+b1)").version == Version("3.12.4")
+
+
+def test_should_search_by_earlier_version():
+    index_file = valid_index_file_with_multiple_version_of_package()  # noqa: F821
+
+    index = Index(index_file)
+
+    assert index.search("python3 (<< 3.11.4-5+b1)").version == Version("3.10.4")
 
 
 def valid_index_file():
@@ -134,6 +142,7 @@ def valid_index_file_with_multiple_version_of_package():
         [
             valid_index_file(),
             valid_index_file().replace("Version: 3.11.4-5+b1", "Version: 3.12.4"),
+            valid_index_file().replace("Version: 3.11.4-5+b1", "Version: 3.10.4"),
         ]
     )
 
