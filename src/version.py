@@ -6,6 +6,9 @@ class Version:
         self.text = version
         self.epoch, self.upstream, self.revision = split_debian_version(version)
 
+    def __repr__(self) -> str:
+        return self.text
+
     def __hash__(self) -> int:
         return hash(self.text)
 
