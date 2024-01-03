@@ -21,50 +21,35 @@ class Index:
         return len(self.packages)
 
     def search(self, name) -> Package | None:
+        pattern = r"(\S+)(?: \((<<|<=|=|>=|>>) (\S+)\))?"
         result = None
 
-        if (
-            match := re.match(r"(\S+)(?: \((<<|<=|=|>=|>>) (\S+)\))?", name)
-        ) is not None:
+        if (match := re.match(pattern, name)) is None:
+            result = None
+        else:
             package, operation, target_version = match.groups()
-
             package_versions = self.packages[package]
 
-            match operation:
-                case None:
-                    result = list(package_versions.values())[LATEST_INDEX]
-                case "=":
-                    target_version = Version(target_version)
-                    result = package_versions[target_version]
-                case ">>":
-                    target_version = Version(target_version)
-                    result = next(
-                        (
-                            package
-                            for version, package in package_versions.items()
-                            if version > target_version
-                        ),
-                        None,
-                    )
-                case "<<":
-                    target_version = Version(target_version)
-                    result = next(
-                        (
-                            package
-                            for version, package in package_versions.items()
-                            if version < target_version
-                        ),
-                        None,
-                    )
-                case ">=":
-                    target_version = Version(target_version)
-                    result = next(
-                        (
-                            package
-                            for version, package in package_versions.items()
-                            if version >= target_version
-                        )
-                    )
+            if operation is None:
+                result = list(package_versions.values())[LATEST_INDEX]
+            elif operation == "=":
+                result = package_versions[Version(target_version)]
+            else:
+                compare = {
+                    ">>": Version.__gt__,
+                    "<<": Version.__lt__,
+                    ">=": Version.__ge__,
+                    "<=": Version.__le__,
+                }[operation]
+
+                result = next(
+                    (
+                        package
+                        for version, package in package_versions.items()
+                        if compare(version, Version(target_version))
+                    ),
+                    None,
+                )
 
         return result
 
