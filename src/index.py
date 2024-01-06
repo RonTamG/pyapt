@@ -65,3 +65,8 @@ class Index:
             self.packages[package.name] = {package.version: package}
 
         [self.add_package(pack) for pack in package.provides]
+
+    def set_packages_apt_source(self, source):
+        for package_versions in self.packages.values():
+            for package in package_versions.values():
+                package.apt_source = source

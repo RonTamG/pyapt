@@ -99,6 +99,15 @@ def test_should_search_by_earlier_or_equal_version():
     assert index.search("python3 (<= 3.10.5)").version == Version("3.10.4")
 
 
+def test_should_add_apt_source_field_to_packages():
+    source = "http://deb.debian.org/debian bullseye/main amd64"
+    index = valid_index()
+
+    index.set_packages_apt_source(source)
+
+    index.search("python3").apt_source = source
+
+
 def valid_index_file():
     return """Package: python3
 Source: python3-defaults (3.11.4-5)
