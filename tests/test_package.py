@@ -47,6 +47,14 @@ def test_should_have_a_description():
     )
 
 
+def test_new_package_should_have_a_none_apt_source_field():
+    package_data = valid_package_data()
+
+    package = Package(package_data)
+
+    assert package.apt_source is None
+
+
 def test_should_be_compareable_by_name():
     package_1 = Package(valid_package_data())
     package_2 = Package(valid_package_data_with_different_name())

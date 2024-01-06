@@ -23,6 +23,7 @@ class Package:
         self.architecture = values["Architecture"]
         self.maintainer = values["Maintainer"]
         self.description = values["Description"]
+        self.apt_source = None
 
         if "Provides" in values:
             package_data = package_data.replace(f"Provides: {values['Provides']}\n", "")
