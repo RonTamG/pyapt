@@ -35,6 +35,8 @@ class Package:
         else:
             self.provides = []
 
+        self.all_fields = values
+
     def __equ__(self, other) -> bool:
         if isinstance(other, Package):
             if self.name == other.name:
@@ -61,3 +63,6 @@ class Package:
                 return self.name < other.name
         else:
             raise NotImplementedError
+
+    def __str__(self) -> str:
+        return "\n".join([f"{key}: {value}" for key, value in self.all_fields.items()])

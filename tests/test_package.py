@@ -88,6 +88,14 @@ def test_package_without_provides_field_should_have_empty_provides_list():
     assert len(package.provides) == 0
 
 
+def test_package_should_return_to_original_string():
+    data = valid_package_data()
+
+    package = Package(data)
+
+    assert str(package) == data
+
+
 def valid_package_data():
     return """Package: python3
 Source: python3-defaults (3.11.4-5)
