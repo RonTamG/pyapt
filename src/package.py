@@ -24,7 +24,9 @@ class Package:
         self.maintainer = values["Maintainer"]
         self.description = values["Description"]
 
-        if "Priority" not in values:
+        if "Priority" in values:
+            self.priority = values["Priority"]
+        else:
             self.priority = "optional"
 
         if "Provides" in values:

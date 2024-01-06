@@ -53,6 +53,12 @@ def test_should_have_priority_optional_if_none_specified():
     assert package.priority == "optional"
 
 
+def test_should_have_priority_field():
+    package = Package(valid_package_data_with_priority_field())
+
+    assert package.priority == "required"
+
+
 def test_new_package_should_have_a_none_apt_source_field():
     package_data = valid_package_data()
 
