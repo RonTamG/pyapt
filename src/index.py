@@ -20,6 +20,9 @@ class Index:
     def __len__(self) -> int:
         return len(self.packages)
 
+    def __contains__(self, key):
+        return self.search(key) is not None
+
     def combine(self, other):
         if not isinstance(other, Index):
             raise NotImplementedError()
@@ -38,28 +41,30 @@ class Index:
             result = None
         else:
             package, operation, target_version = match.groups()
-            package_versions = self.packages[package]
 
-            if operation is None:
-                result = list(package_versions.values())[LATEST_INDEX]
-            elif operation == "=":
-                result = package_versions[Version(target_version)]
+            if (package_versions := self.packages.get(package, None)) is None:
+                result = None
             else:
-                compare = {
-                    ">>": Version.__gt__,
-                    "<<": Version.__lt__,
-                    ">=": Version.__ge__,
-                    "<=": Version.__le__,
-                }[operation]
+                if operation is None:
+                    result = list(package_versions.values())[LATEST_INDEX]
+                elif operation == "=":
+                    result = package_versions[Version(target_version)]
+                else:
+                    compare = {
+                        ">>": Version.__gt__,
+                        "<<": Version.__lt__,
+                        ">=": Version.__ge__,
+                        "<=": Version.__le__,
+                    }[operation]
 
-                result = next(
-                    (
-                        package
-                        for version, package in package_versions.items()
-                        if compare(version, Version(target_version))
-                    ),
-                    None,
-                )
+                    result = next(
+                        (
+                            package
+                            for version, package in package_versions.items()
+                            if compare(version, Version(target_version))
+                        ),
+                        None,
+                    )
 
         return result
 

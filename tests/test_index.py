@@ -118,6 +118,14 @@ def test_should_be_combinable_with_other_indexes():
     assert index.search("ca-certificates") is not None
 
 
+def test_should_check_if_package_is_contained_in_list():
+    index = valid_index()
+
+    assert "python3" in index
+    assert "python3 (= 3.11.4-5+b1)" in index
+    assert "ca-certificates" not in index
+
+
 def valid_index_file():
     return """Package: python3
 Source: python3-defaults (3.11.4-5)
