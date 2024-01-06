@@ -31,6 +31,8 @@ class Package:
                 _into_virtual_package(self, name, package_data)
                 for name in provides_list
             ]
+        else:
+            self.provides = []
 
     def __equ__(self, other) -> bool:
         if isinstance(other, Package):
