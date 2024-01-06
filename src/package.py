@@ -23,7 +23,9 @@ class Package:
         self.architecture = values["Architecture"]
         self.maintainer = values["Maintainer"]
         self.description = values["Description"]
-        self.apt_source = None
+
+        if "Priority" not in values:
+            self.priority = "optional"
 
         if "Provides" in values:
             package_data = package_data.replace(f"Provides: {values['Provides']}\n", "")
@@ -35,6 +37,7 @@ class Package:
         else:
             self.provides = []
 
+        self.apt_source = None
         self.all_fields = values
 
     def __equ__(self, other) -> bool:

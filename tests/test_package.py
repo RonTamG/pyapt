@@ -47,6 +47,12 @@ def test_should_have_a_description():
     )
 
 
+def test_should_have_priority_optional_if_none_specified():
+    package = Package(valid_package_data())
+
+    assert package.priority == "optional"
+
+
 def test_new_package_should_have_a_none_apt_source_field():
     package_data = valid_package_data()
 
@@ -116,7 +122,6 @@ Multi-Arch: allowed
 Homepage: https://www.python.org/
 Tag: devel::interpreter, devel::lang:python, devel::library, implemented-in::c, implemented-in::python, role::devel-lib,
 Section: python
-Priority: optional
 Filename: ./python3_3.11.4-5+b1_amd64.deb"""
 
 
@@ -141,7 +146,6 @@ Multi-Arch: allowed
 Homepage: https://www.python.org/
 Tag: devel::interpreter, devel::lang:python, devel::library, implemented-in::c, implemented-in::python, role::devel-lib,
 Section: python
-Priority: optional
 Filename: ./python3_3.11.4-5+b1_amd64.deb"""
 
 
@@ -151,3 +155,7 @@ def valid_package_data_with_greater_version():
 
 def valid_package_data_with_different_name():
     return valid_package_data().replace("Package: python3", "Package: ca-certificates")
+
+
+def valid_package_data_with_priority_field():
+    return valid_package_data() + "\nPriority: required"
