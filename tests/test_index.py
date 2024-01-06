@@ -108,6 +108,16 @@ def test_should_add_apt_source_field_to_packages():
     index.search("python3").apt_source = source
 
 
+def test_should_be_combinable_with_other_indexes():
+    index = valid_index()
+    index_2 = valid_index_with_other_package()
+
+    index.combine(index_2)
+
+    assert index.search("python3") is not None
+    assert index.search("ca-certificates") is not None
+
+
 def valid_index_file():
     return """Package: python3
 Source: python3-defaults (3.11.4-5)
@@ -212,3 +222,26 @@ Filename: ./python3_3.11.4-5+b1_amd64.deb"""
 
 def valid_index():
     return Index(valid_index_file())
+
+
+def valid_index_with_other_package():
+    data = """Package: ca-certificates
+Version: 20230311
+Installed-Size: 384
+Maintainer: Julien Cristau <jcristau@debian.org>
+Architecture: all
+Depends: openssl (>= 1.1.1), debconf (>= 0.5) | debconf-2.0
+Enhances: openssl
+Breaks: ca-certificates-java (<< 20121112+nmu1)
+Size: 153456
+SHA256: 5308b9bd88eebe2a48be3168cb3d87677aaec5da9c63ad0cf561a29b8219115c
+SHA1: 2723803bd4497bd27a499a249e57936821dedbed
+MD5sum: cfc0b4e43c023cdfe87bfa4efac29b6e
+Description: Common CA certificates Contains the certificate authorities shipped with Mozilla's browser to allow
+Multi-Arch: foreign
+Tag: protocol::ssl, role::app-data, security::authentication
+Section: misc
+Priority: standard
+Filename: ./ca-certificates_20230311_all.deb"""
+
+    return Index(data)

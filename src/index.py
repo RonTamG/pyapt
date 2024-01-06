@@ -20,6 +20,16 @@ class Index:
     def __len__(self) -> int:
         return len(self.packages)
 
+    def combine(self, other):
+        if not isinstance(other, Index):
+            raise NotImplementedError()
+
+        for package_versions in other.packages.values():
+            for package in package_versions.values():
+                self.add_package(package)
+
+        return self
+
     def search(self, name) -> Package | None:
         pattern = r"(\S+)(?: \((<<|<=|=|>=|>>) (\S+)\))?"
         result = None
