@@ -63,3 +63,5 @@ class Index:
             }
         else:
             self.packages[package.name] = {package.version: package}
+
+        [self.add_package(pack) for pack in package.provides]
