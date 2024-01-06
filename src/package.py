@@ -3,6 +3,13 @@ import re
 from src.version import Version
 
 
+def _into_virtual_package(self, name, package_data):
+    name, *_ = name.split(" ")  # ignoring the version of the virtual package
+    package_data = package_data.replace(f"Package: {self.name}", f"Package: {name}")
+
+    return Package(package_data)
+
+
 class Package:
     def __init__(self, package_data) -> None:
         matches = re.finditer(
@@ -16,6 +23,14 @@ class Package:
         self.architecture = values["Architecture"]
         self.maintainer = values["Maintainer"]
         self.description = values["Description"]
+
+        if "Provides" in values:
+            package_data = package_data.replace(f"Provides: {values['Provides']}\n", "")
+            provides_list = [value.strip() for value in values["Provides"].split(",")]
+            self.provides = [
+                _into_virtual_package(self, name, package_data)
+                for name in provides_list
+            ]
 
     def __equ__(self, other) -> bool:
         if isinstance(other, Package):

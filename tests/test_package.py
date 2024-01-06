@@ -65,6 +65,15 @@ def test_should_be_compareable_by_version_if_names_are_equal():
     assert package_1 != package_2
 
 
+def test_package_with_provides_field_should_have_virtual_package_provides_list():
+    expected = ["python3-profiler", "python3-supported-max", "python3-supported-min"]
+
+    package = Package(valid_package_data())
+
+    provides_names = [pack.name for pack in package.provides]
+    assert all(pack in provides_names for pack in expected)
+
+
 def valid_package_data():
     return """Package: python3
 Source: python3-defaults (3.11.4-5)
