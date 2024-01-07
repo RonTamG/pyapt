@@ -36,6 +36,11 @@ class Package:
         else:
             self.pre_dependencies = []
 
+        if "Depends" in values:
+            self.dependencies = [pack.strip() for pack in values["Depends"].split(",")]
+        else:
+            self.dependencies = []
+
         if "Provides" in values:
             package_data = package_data.replace(f"Provides: {values['Provides']}\n", "")
             provides_list = [value.strip() for value in values["Provides"].split(",")]

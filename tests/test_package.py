@@ -71,6 +71,18 @@ def test_should_have_empty_pre_dependencies_field_if_none_specified():
     assert len(package.pre_dependencies) == 0
 
 
+def test_should_have_a_dependencies_field():
+    package = Package(valid_package_data())
+
+    assert len(package.dependencies) == 2
+
+
+def test_should_have_empty_dependencies_field_if_none_specified():
+    package = Package(valid_package_data_without_dependencies())
+
+    assert len(package.dependencies) == 0
+
+
 def test_new_package_should_have_a_none_apt_source_field():
     package_data = valid_package_data()
 
@@ -182,4 +194,10 @@ def valid_package_data_with_priority_field():
 def valid_package_data_without_pre_dependencies():
     return valid_package_data().replace(
         "Pre-Depends: python3-minimal (= 3.11.4-5+b1)\n", ""
+    )
+
+
+def valid_package_data_without_dependencies():
+    return valid_package_data().replace(
+        "Depends: python3.11 (>= 3.11.4-1~), libpython3-stdlib (= 3.11.4-5+b1)", ""
     )
