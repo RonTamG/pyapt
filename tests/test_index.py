@@ -1,5 +1,7 @@
 # ruff: noqa: E501
 
+from pathlib import Path
+
 from src.index import Index
 from src.version import Version
 
@@ -124,6 +126,14 @@ def test_should_check_if_package_is_contained_in_list():
     assert "python3" in index
     assert "python3 (= 3.11.4-5+b1)" in index
     assert "ca-certificates" not in index
+
+
+def test_should_get_package_dependencies():
+    index = valid_full_index_of_package()
+
+    packages = index.get_package_dependecies("python3")
+
+    assert len(packages) == 33
 
 
 def valid_index_file():
@@ -252,4 +262,9 @@ Section: misc
 Priority: standard
 Filename: ./ca-certificates_20230311_all.deb"""
 
+    return Index(data)
+
+
+def valid_full_index_of_package():
+    data = Path("tests", "resources", "python_Packages").read_text()
     return Index(data)

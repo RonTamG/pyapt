@@ -85,3 +85,29 @@ class Index:
         for package_versions in self.packages.values():
             for package in package_versions.values():
                 package.apt_source = source
+
+    def get_package_dependecies(self, name, packages=None):
+        current = self.search(name)
+
+        if current is None:
+            raise KeyError(name)
+
+        if packages is None:
+            packages = []
+
+        if current.priority in ["required", "important"]:
+            return None
+
+        if current in packages:
+            return None
+        else:
+            packages.append(current)
+
+        [
+            self.get_package_dependecies(dep, packages)
+            for dep in current.pre_dependencies
+        ]
+
+        [self.get_package_dependecies(dep, packages) for dep in current.dependencies]
+
+        return packages
