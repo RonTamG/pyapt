@@ -59,6 +59,18 @@ def test_should_have_priority_field():
     assert package.priority == "required"
 
 
+def test_should_have_a_pre_dependencies_field():
+    package = Package(valid_package_data())
+
+    assert len(package.pre_dependencies) == 1
+
+
+def test_should_have_empty_pre_dependencies_field_if_none_specified():
+    package = Package(valid_package_data_without_pre_dependencies())
+
+    assert len(package.pre_dependencies) == 0
+
+
 def test_new_package_should_have_a_none_apt_source_field():
     package_data = valid_package_data()
 
@@ -165,3 +177,9 @@ def valid_package_data_with_different_name():
 
 def valid_package_data_with_priority_field():
     return valid_package_data() + "\nPriority: required"
+
+
+def valid_package_data_without_pre_dependencies():
+    return valid_package_data().replace(
+        "Pre-Depends: python3-minimal (= 3.11.4-5+b1)\n", ""
+    )

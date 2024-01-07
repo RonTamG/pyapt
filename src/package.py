@@ -29,6 +29,13 @@ class Package:
         else:
             self.priority = "optional"
 
+        if "Pre-Depends" in values:
+            self.pre_dependencies = [
+                pack.strip() for pack in values["Pre-Depends"].split(",")
+            ]
+        else:
+            self.pre_dependencies = []
+
         if "Provides" in values:
             package_data = package_data.replace(f"Provides: {values['Provides']}\n", "")
             provides_list = [value.strip() for value in values["Provides"].split(",")]
