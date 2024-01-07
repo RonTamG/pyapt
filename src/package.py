@@ -54,6 +54,9 @@ class Package:
         self.apt_source = None
         self.all_fields = values
 
+    def __repr__(self) -> str:
+        return f"{self.name} ({self.version})"
+
     def __equ__(self, other) -> bool:
         if isinstance(other, Package):
             if self.name == other.name:
