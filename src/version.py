@@ -1,3 +1,4 @@
+import itertools
 import re
 
 
@@ -85,37 +86,39 @@ def order(c):
     """
     give a weight to the character to order in the debian version comparison.
     """
-    if c.isdigit():
-        return 0
-    elif c.isalpha():
-        return ord(c)
-    elif c == "~":
+    if c == "~":
         return -1
     elif c == " ":
         return 0
-    elif c:
-        return ord(c) + 256
+    elif c.isdigit():
+        return int(c) + 1
+    elif c.isalpha():
+        return ord(c)
     else:
-        return 0
+        return ord(c) + 256
 
 
 def debian_upstream_compare(first, second):
     """
     compare a debian upstream version or revision string with another
     """
-    first = first.ljust(len(second), " ")
-    second = second.ljust(len(first), " ")
+    first = re.findall(r"\d+|\D+", first)
+    second = re.findall(r"\d+|\D+", second)
 
-    for a, b in zip(first, second):
-        if not a.isdigit() or not b.isdigit():
-            ac = order(a)
-            bc = order(b)
-            if ac != bc:
-                return ac - bc
-
+    for a, b in itertools.zip_longest(first, second, fillvalue="0"):
         if a.isdigit() and b.isdigit():
-            diff = int(a) - int(b)
-            if diff != 0:
-                return diff
-    else:
-        return 0
+            a = int(a)
+            b = int(b)
+            if a < b:
+                return -1
+            if a > b:
+                return 1
+        else:
+            a = (order(c) for c in a)
+            b = (order(c) for c in b)
+            for ac, bc in itertools.zip_longest(a, b, fillvalue="0"):
+                if ac < bc:
+                    return -1
+                if ac > bc:
+                    return 1
+    return 0

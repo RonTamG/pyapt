@@ -23,6 +23,7 @@ def test_should_compare_equal(a, b):
         ("0:b-0", "0:a-0"),
         ("11.1+deb11u6", "11.0+deb11u6"),
         ("0:0-b", "0:0-a"),
+        ("2.37-12", "2.4"),
     ],
 )
 def test_should_compare_greater_than(a, b):
