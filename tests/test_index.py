@@ -136,6 +136,17 @@ def test_should_get_package_dependencies():
     assert len(packages) == 33
 
 
+def test_should_get_package_dependencies_should_fail_when_package_is_missing():
+    index = full_index_with_missing_package()
+
+    try:
+        index.get_package_dependecies("python3")
+    except KeyError as e:
+        assert str(e) == "'libc6 (>= 2.35)'"
+    else:
+        raise AssertionError("Expected KeyError but action completed successfully")
+
+
 def valid_index_file():
     return """Package: python3
 Source: python3-defaults (3.11.4-5)
@@ -268,3 +279,10 @@ Filename: ./ca-certificates_20230311_all.deb"""
 def valid_full_index_of_package():
     data = Path("tests", "resources", "python_Packages").read_text()
     return Index(data)
+
+
+def full_index_with_missing_package():
+    index = valid_full_index_of_package()
+    index.packages.pop("libc6")
+
+    return index
