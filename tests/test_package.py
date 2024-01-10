@@ -83,6 +83,18 @@ def test_should_have_empty_dependencies_field_if_none_specified():
     assert len(package.dependencies) == 0
 
 
+def test_should_have_a_recommended_field():
+    package = Package(valid_package_data_with_recommended())
+
+    assert len(package.recommended) == 1
+
+
+def test_should_have_empty_recommended_field_if_none_specified():
+    package = Package(valid_package_data())
+
+    assert len(package.recommended) == 0
+
+
 def test_new_package_should_have_a_none_apt_source_field():
     package_data = valid_package_data()
 
@@ -177,6 +189,27 @@ Homepage: https://www.python.org/
 Tag: devel::interpreter, devel::lang:python, devel::library, implemented-in::c, implemented-in::python, role::devel-lib,
 Section: python
 Filename: ./python3_3.11.4-5+b1_amd64.deb"""
+
+
+def valid_package_data_with_recommended():
+    return """Package: python3.11
+Version: 3.11.6-3
+Installed-Size: 663
+Maintainer: Matthias Klose <doko@debian.org>
+Architecture: amd64
+Depends: python3.11-minimal (= 3.11.6-3), libpython3.11-stdlib (= 3.11.6-3), media-types | mime-support
+Recommends: ca-certificates
+Suggests: python3.11-venv, python3.11-doc, binutils
+Breaks: python3-all (<< 3.6.5~rc1-1), python3-dev (<< 3.6.5~rc1-1), python3-venv (<< 3.6.5-2)
+Size: 586144
+SHA256: 0a1049522d1e99069b88b8e48810f239d723b40c14b1ca690a596cb80c45a88c
+SHA1: d383bb67bb79cc6a880fb319714e35c8bafddfbd
+MD5sum: 3a594cdb15edbfb84fc1a4b56f355030
+Description: Interactive high-level object-oriented language (version 3.11) Python is a high-level, interactive, object-oriented language. Its 3.11 version
+Multi-Arch: allowed
+Section: python
+Priority: optional
+Filename: ./python3.11_3.11.6-3_amd64.deb"""
 
 
 def valid_package_data_with_greater_version():

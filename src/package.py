@@ -51,6 +51,13 @@ class Package:
         else:
             self.provides = []
 
+        if "Recommends" in values:
+            self.recommended = [
+                pack.strip() for pack in values["Recommends"].split(",")
+            ]
+        else:
+            self.recommended = []
+
         self.apt_source = None
         self.all_fields = values
 
