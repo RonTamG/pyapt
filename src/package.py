@@ -10,6 +10,13 @@ def _into_virtual_package(self, name, package_data):
     return Package(package_data)
 
 
+def _add_list_value(list_name, values, default=list([])):
+    if list_name in values:
+        return [pack.strip() for pack in values[list_name].split(",")]
+    else:
+        return default
+
+
 class Package:
     def __init__(self, package_data) -> None:
         matches = re.finditer(
@@ -24,22 +31,10 @@ class Package:
         self.maintainer = values["Maintainer"]
         self.description = values["Description"]
 
-        if "Priority" in values:
-            self.priority = values["Priority"]
-        else:
-            self.priority = "optional"
-
-        if "Pre-Depends" in values:
-            self.pre_dependencies = [
-                pack.strip() for pack in values["Pre-Depends"].split(",")
-            ]
-        else:
-            self.pre_dependencies = []
-
-        if "Depends" in values:
-            self.dependencies = [pack.strip() for pack in values["Depends"].split(",")]
-        else:
-            self.dependencies = []
+        self.pre_dependencies = _add_list_value("Pre-Depends", values)
+        self.dependencies = _add_list_value("Depends", values)
+        self.recommended = _add_list_value("Recommends", values)
+        self.priority = values.get("Priority", "optional")
 
         if "Provides" in values:
             package_data = package_data.replace(f"Provides: {values['Provides']}\n", "")
@@ -50,13 +45,6 @@ class Package:
             ]
         else:
             self.provides = []
-
-        if "Recommends" in values:
-            self.recommended = [
-                pack.strip() for pack in values["Recommends"].split(",")
-            ]
-        else:
-            self.recommended = []
 
         self.apt_source = None
         self.all_fields = values
