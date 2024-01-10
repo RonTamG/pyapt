@@ -131,7 +131,7 @@ def test_should_check_if_package_is_contained_in_list():
 def test_should_get_package_dependencies():
     index = valid_full_index_of_package()
 
-    packages = index.get_package_dependecies("python3")
+    packages = index.get_package_dependencies("python3")
 
     assert len(packages) == 33
 
@@ -139,7 +139,7 @@ def test_should_get_package_dependencies():
 def test_should_get_package_dependencies_with_recommended():
     index = valid_full_index_of_package()
 
-    packages = index.get_package_dependecies("python3", with_recommended=True)
+    packages = index.get_package_dependencies("python3", with_recommended=True)
 
     assert len(packages) == 43
 
@@ -148,7 +148,7 @@ def test_should_get_package_dependencies_should_fail_when_package_is_missing():
     index = full_index_with_missing_package()
 
     try:
-        index.get_package_dependecies("python3")
+        index.get_package_dependencies("python3")
     except KeyError as e:
         assert str(e) == "'libc6 (>= 2.35)'"
     else:

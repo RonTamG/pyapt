@@ -86,7 +86,7 @@ class Index:
             for package in package_versions.values():
                 package.apt_source = source
 
-    def get_package_dependecies(self, name, packages=None, with_recommended=False):
+    def get_package_dependencies(self, name, packages=None, with_recommended=False):
         current = self.search(name)
 
         if current is None:
@@ -104,19 +104,19 @@ class Index:
             packages.append(current)
 
         [
-            self.get_package_dependecies(dep, packages, with_recommended)
+            self.get_package_dependencies(dep, packages, with_recommended)
             for dep in current.pre_dependencies
         ]
 
         [
-            self.get_package_dependecies(dep, packages, with_recommended)
+            self.get_package_dependencies(dep, packages, with_recommended)
             for dep in current.dependencies
         ]
 
         if with_recommended:
             try:
                 [
-                    self.get_package_dependecies(dep, packages, with_recommended)
+                    self.get_package_dependencies(dep, packages, with_recommended)
                     for dep in current.recommended
                 ]
             except KeyError:
