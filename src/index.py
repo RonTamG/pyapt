@@ -37,14 +37,10 @@ class Index:
         pattern = r"(\S+)(?: \((<<|<=|=|>=|>>) (\S+)\))?"
         result = None
 
-        if (match := re.match(pattern, name)) is None:
-            result = None
-        else:
+        if (match := re.match(pattern, name)) is not None:
             package, operation, target_version = match.groups()
 
-            if (package_versions := self.packages.get(package, None)) is None:
-                result = None
-            else:
+            if (package_versions := self.packages.get(package, None)) is not None:
                 if operation is None:
                     result = list(package_versions.values())[LATEST_INDEX]
                 elif operation == "=":
