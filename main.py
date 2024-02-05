@@ -1,7 +1,4 @@
 import argparse
-import gzip
-import lzma
-import os
 import re
 import shutil
 import tarfile
@@ -9,18 +6,11 @@ from functools import reduce
 from pathlib import Path
 
 from src.file_manager import FileManager
+from src.index import Index
 from src.install import create_install_script
-from src.packages import get_package_dependencies, get_package_url
 from src.progress_bar import progressbar
 from src.sources_list import SourcesList
-from src.update import (
-    add_apt_source_field,
-    add_virtual_indexes,
-    combine_indexes,
-    generate_index_dictionary,
-    get_apt_sources,
-    index_to_package_file_format,
-)
+from src.update import get_apt_sources
 
 DEFAULT_ARCHITECTURE = "amd64"
 
@@ -35,19 +25,7 @@ def tar_dir(path, name):
         tar.add(Path(path, "install.sh"), filter=set_permissions)
 
 
-def read(path):
-    """
-    return the contents of a text file, supports xz, gz compressions
-    """
-    if path.suffix == ".xz":
-        return lzma.decompress(path.read_bytes()).decode("utf-8")
-    elif path.suffix == ".gz":
-        return gzip.decompress(path.read_bytes()).decode("utf-8")
-    else:
-        return path.read_text()
-
-
-def apt_update(sources_list_path, temp_folder, enable_progress_bar=True):
+def apt_update(sources_list_path, enable_progress_bar=True):
     """
     retrieve the required files and create an index of the packages
     """
@@ -58,28 +36,24 @@ def apt_update(sources_list_path, temp_folder, enable_progress_bar=True):
     urls = sources_list.index_urls(architecture=DEFAULT_ARCHITECTURE)
 
     # download index files and save them
-    manager = FileManager(temp_folder)
-    get_urls = (manager.get_update_file(url) for url in urls)
+    manager = FileManager()
+    index_files = (manager.get_package_index_file(url) for url in urls)
     if enable_progress_bar:
-        get_urls = progressbar(get_urls, len(urls), prefix="Update: ")
-    saved = [name for name in get_urls if name != ""]
+        index_files = progressbar(
+            index_files, len(urls), prefix="Update: ", with_item=False
+        )
 
     # create an index dictionary from the index files
-    index_files = (path for path in saved if path.stem.endswith("Packages"))
-    decompressed = (read(path) for path in index_files)
-    indexes = (
-        generate_index_dictionary(data) for data in decompressed if len(data) > 0
-    )
+    indexes = (Index(data) for data in index_files if len(data) > 0)
 
     # add an 'Apt-Source' key to all packages in the index, used later in order to download package  # noqa: E501
     sources = (get_apt_sources(url) for url in urls)
     indexes = (
-        add_apt_source_field(index, source) for index, source in zip(indexes, sources)
+        index.set_packages_apt_source(source) for index, source in zip(indexes, sources)
     )
 
     # combine all indexes into one and add virtual packages
-    full_index = reduce(combine_indexes, indexes)
-    full_index = add_virtual_indexes(full_index)
+    full_index = reduce(Index.combine, indexes)
 
     return full_index
 
@@ -88,39 +62,31 @@ def download_package(
     name,
     index,
     temp_folder,
-    with_dependencies=True,
     with_recommended=True,
-    with_pre_dependencies=True,
     with_required=False,
     enable_progress_bar=True,
 ):
     """
     download a package with all it's dependencies
     """
-    packages = get_package_dependencies(
-        name,
-        index,
-        with_dependencies=with_dependencies,
-        with_recommended=with_recommended,
-        with_pre_dependencies=with_pre_dependencies,
-        with_required=with_required,
-    )
-
-    urls = [get_package_url(name, index) for name in packages]
+    packages = index.get_package_dependencies(name, with_recommended=with_recommended)
+    urls = [package.download_url for package in packages]
 
     # download index files and save them
-    manager = FileManager(temp_folder)
-    get_urls = (manager.get_package_file(url) for url in urls)
+    manager = FileManager()
+    get_urls = (
+        manager.get_package_file(url, Path(temp_folder, "packages")) for url in urls
+    )
 
     if enable_progress_bar:
         get_urls = progressbar(get_urls, len(urls), prefix=f"{name}: ")
-    saved = [name for name in get_urls if name != ""]
+    [name for name in get_urls if name != ""]
 
-    return (saved, packages)
+    return packages
 
 
-def write_install_script(filenames, temp_folder):
-    data = create_install_script(filenames)
+def write_install_script(name, temp_folder):
+    data = create_install_script(name)
     with open(f"{temp_folder}/install.sh", "w", newline="\n") as install:
         install.write(data)
 
@@ -147,24 +113,9 @@ def create_parser():
         help="don't remove temp directory at the end of all package downloads",
     )
     parser.add_argument(
-        "--keep-update",
-        action="store_true",
-        help="don't remove temp update directory at the end of all package downloads",
-    )
-    parser.add_argument(
         "--no-recommended",
         action="store_true",
         help="don't download recommended packages",
-    )
-    parser.add_argument(
-        "--no-dependencies",
-        action="store_true",
-        help="don't download dependency packages",
-    )
-    parser.add_argument(
-        "--no-pre-dependencies",
-        action="store_true",
-        help="don't download pre-dependency packages",
     )
     parser.add_argument(
         "--with-required",
@@ -180,10 +131,8 @@ def create_parser():
     return parser
 
 
-def generate_packages_file(index, packages, temp_folder):
-    data = "\n\n".join(
-        [index_to_package_file_format(index[package]) for package in packages]
-    )
+def generate_packages_index_file(packages, temp_folder):
+    data = "\n\n".join([str(package) for package in packages])
     data += "\n"
     data = re.sub(r"Filename: (.+\/)+(.+)", r"Filename: ./\2", data)
 
@@ -196,8 +145,6 @@ def main():
     temp_folder = args.temp_folder
     sources_list = args.sources_list
     with_recommended = not args.no_recommended
-    with_dependencies = not args.no_dependencies
-    with_pre_dependencies = not args.no_pre_dependencies
     with_required = args.with_required
     enable_progress_bar = not args.no_progress_bar
 
@@ -206,27 +153,22 @@ def main():
         print(f"pyapt: error: the file {sources_list} is missing")
         exit()
 
-    index = apt_update(sources_list, temp_folder, enable_progress_bar)
+    index = apt_update(sources_list, enable_progress_bar)
 
     for name in args.packages:
-        _, packages = download_package(
+        packages = download_package(
             name,
             index,
             temp_folder,
-            with_dependencies,
             with_recommended,
-            with_pre_dependencies,
             with_required,
             enable_progress_bar,
         )
-        generate_packages_file(index, packages, temp_folder)
+        generate_packages_index_file(packages, temp_folder)
         write_install_script(name, temp_folder)
         tar_dir(temp_folder, f"{name}.tar.gz")
 
-        if not args.keep:
-            shutil.rmtree(os.path.join(temp_folder, "packages"))
-            os.remove(os.path.join(temp_folder, "install.sh"))
-    if not (args.keep or args.keep_update):
+    if not args.keep:
         shutil.rmtree(temp_folder)
 
 
