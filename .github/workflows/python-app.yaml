@@ -93,7 +93,7 @@ jobs:
     - name: Install dependencies
       run: pip install black isort
     - name: Merge source files
-      run: cat src/sources_list.py src/file_manager.py src/update.py src/packages.py src/install.py main.py  | python .github/clean_imports.py | isort --float-to-top - | black - > pyapt.py
+      run: cat src/progress_bar.py src/sources_list.py src/version.py src/package.py src/index.py src/file_manager.py src/install.py main.py  | python .github/clean_imports.py | isort --float-to-top - | black - > pyapt.py
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:

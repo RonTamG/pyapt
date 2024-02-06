@@ -10,9 +10,24 @@ from src.index import Index
 from src.install import create_install_script
 from src.progress_bar import progressbar
 from src.sources_list import SourcesList
-from src.update import get_apt_sources
 
 DEFAULT_ARCHITECTURE = "amd64"
+
+
+def get_apt_sources(url):
+    """
+    return the apt sources of a given index package url
+    """
+    pattern = re.compile(
+        r"(?P<url>\w+://.+?/.+)/dists/(?P<dist>.+?)/(?P<component>.+?)/binary-(?P<arch>.+?)/Packages"
+    )
+    result = re.match(pattern, url)
+    if result is None:
+        raise ValueError("url has invalid format")
+
+    uri, dist, component, architecture = result.groups()
+
+    return f"{uri} {dist}/{component} {architecture}"
 
 
 def tar_dir(path, name):
