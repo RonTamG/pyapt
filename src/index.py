@@ -37,31 +37,34 @@ class Index:
         pattern = r"([^\s:]+)(?::(\S+))?(?: \((<<|<=|=|>=|>>) (\S+)\))?"
         result = None
 
-        if (match := re.match(pattern, name)) is not None:
-            # here we ignore the architecture
-            package, _, operation, target_version = match.groups()
+        alternatives = (alt.strip() for alt in name.split("|"))
 
-            if (package_versions := self.packages.get(package, None)) is not None:
-                if operation is None:
-                    result = list(package_versions.values())[LATEST_INDEX]
-                elif operation == "=":
-                    result = package_versions[Version(target_version)]
-                else:
-                    compare = {
-                        ">>": Version.__gt__,
-                        "<<": Version.__lt__,
-                        ">=": Version.__ge__,
-                        "<=": Version.__le__,
-                    }[operation]
+        while (result is None) and (name := next(alternatives, None)) is not None:
+            if (match := re.match(pattern, name)) is not None:
+                # here we ignore the architecture
+                package, _, operation, target_version = match.groups()
 
-                    result = next(
-                        (
-                            package
-                            for version, package in package_versions.items()
-                            if compare(version, Version(target_version))
-                        ),
-                        None,
-                    )
+                if (package_versions := self.packages.get(package, None)) is not None:
+                    if operation is None:
+                        result = list(package_versions.values())[LATEST_INDEX]
+                    elif operation == "=":
+                        result = package_versions[Version(target_version)]
+                    else:
+                        compare = {
+                            ">>": Version.__gt__,
+                            "<<": Version.__lt__,
+                            ">=": Version.__ge__,
+                            "<=": Version.__le__,
+                        }[operation]
+
+                        result = next(
+                            (
+                                package
+                                for version, package in package_versions.items()
+                                if compare(version, Version(target_version))
+                            ),
+                            None,
+                        )
 
         return result
 

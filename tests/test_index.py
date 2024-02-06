@@ -101,6 +101,14 @@ def test_should_search_by_earlier_or_equal_version():
     assert index.search("python3 (<= 3.10.5)").version == Version("3.10.4")
 
 
+def test_search_should_pick_first_existing_alternative():
+    index = Index(valid_index_file_with_multiple_packages())
+
+    assert index.search("python3 | ca-certificates").name == "python3"
+    assert index.search("ca-certificates | python3").name == "ca-certificates"
+    assert index.search("doesnt-exist | python3").name == "python3"
+
+
 def test_should_add_apt_source_field_to_packages():
     source = "http://deb.debian.org/debian bullseye/main amd64"
     index = valid_index()
