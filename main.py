@@ -1,4 +1,5 @@
 import argparse
+import pickle
 import re
 import shutil
 import tarfile
@@ -168,7 +169,11 @@ def main():
         print(f"pyapt: error: the file {sources_list} is missing")
         exit()
 
-    index = apt_update(sources_list, enable_progress_bar)
+    index_dump_path = Path(temp_folder, "index_dump")
+    if index_dump_path.exists():
+        index = pickle.loads(index_dump_path.read_bytes())
+    else:
+        index = apt_update(sources_list, enable_progress_bar)
 
     for name in args.packages:
         packages = download_package(
@@ -181,10 +186,15 @@ def main():
         )
         generate_packages_index_file(packages, temp_folder)
         write_install_script(name, temp_folder)
+        index_dump_path.unlink(missing_ok=True)
         tar_dir(temp_folder, f"{name}.tar.gz")
 
     if not args.keep:
         shutil.rmtree(temp_folder)
+    else:
+        index_dump_path.parent.mkdir(parents=True, exist_ok=True)
+        with index_dump_path.open("wb") as index_dump:
+            pickle.dump(index, index_dump)
 
 
 if __name__ == "__main__":
