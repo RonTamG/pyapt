@@ -95,12 +95,12 @@ def test_should_have_empty_recommended_field_if_none_specified():
     assert len(package.recommended) == 0
 
 
-def test_new_package_should_have_a_none_apt_source_field():
+def test_new_package_should_have_an_empty_apt_source_field():
     package_data = valid_package_data()
 
     package = Package(package_data)
 
-    assert package.apt_source is None
+    assert package.apt_source == ""
 
 
 def test_should_have_download_url_field():

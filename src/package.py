@@ -47,7 +47,7 @@ class Package:
         else:
             self.provides = []
 
-        self.apt_source = None
+        self.apt_source = ""
         self.all_fields = values
 
     @property
