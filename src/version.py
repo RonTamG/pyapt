@@ -116,7 +116,7 @@ def debian_upstream_compare(first, second):
         else:
             a = (order(c) for c in a)
             b = (order(c) for c in b)
-            for ac, bc in itertools.zip_longest(a, b, fillvalue="0"):
+            for ac, bc in itertools.zip_longest(a, b, fillvalue=0):
                 if ac < bc:
                     return -1
                 if ac > bc:
