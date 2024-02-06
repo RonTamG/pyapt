@@ -1,3 +1,12 @@
+## [1.8.1](https://github.com/RonTamG/pyapt/compare/v1.8.0...v1.8.1) (2024-02-06)
+
+
+### Bug Fixes
+
+* fixed merged python artifact ([941f956](https://github.com/RonTamG/pyapt/commit/941f95692b1bb387c8e6af547fe4530af6d47d17))
+
+
+
 # [1.8.0](https://github.com/RonTamG/pyapt/compare/v1.7.0...v1.8.0) (2024-02-06)
 
 
@@ -92,17 +101,6 @@
 * added error message on missing sources list file ([57d9317](https://github.com/RonTamG/pyapt/commit/57d9317b85e318f4f88f7c83cd733583e7a52dda))
 * changed user agent to debian apt ([0c84d07](https://github.com/RonTamG/pyapt/commit/0c84d0797674cb6b0ce74a9fa3efa759805bbfb5))
 * fix added ansi escape character support in windows console ([9cf8b1b](https://github.com/RonTamG/pyapt/commit/9cf8b1b4573ffa513b914d423cf10b0b9b126ca3))
-
-
-
-## [1.5.1](https://github.com/RonTamG/pyapt/compare/v1.5.0...v1.5.1) (2023-08-24)
-
-
-### Bug Fixes
-
-* added explicit encoding to Packages file write ([4cdfe04](https://github.com/RonTamG/pyapt/commit/4cdfe040158c131f1353853d9a23dfd902330c4b))
-* multiline packages values with no data on first line ([f7d9adb](https://github.com/RonTamG/pyapt/commit/f7d9adb1281498a1c0c2b23ea99407929a8f28e2))
-* parsing comments in sources list ([39cbff7](https://github.com/RonTamG/pyapt/commit/39cbff7885aa311be8aba7c3460451a6f13bd116))
 
 
 
