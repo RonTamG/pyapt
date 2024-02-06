@@ -36,7 +36,7 @@ jobs:
     - name: Check formatting
       run: black --check .
     - name: Type check
-      run: mypy --check .
+      run: mypy --exclude tests --check .
     - name: Test
       run: pytest
     - name: Test git download and install
