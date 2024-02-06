@@ -82,6 +82,8 @@ class Index:
             for package in package_versions.values():
                 package.apt_source = source
 
+        return self
+
     def get_package_dependencies(self, name, packages=None, with_recommended=False):
         current = self.search(name)
 
