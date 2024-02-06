@@ -1,3 +1,12 @@
+## [1.8.2](https://github.com/RonTamG/pyapt/compare/v1.8.1...v1.8.2) (2024-02-06)
+
+
+### Bug Fixes
+
+* fixed merged python artifact ([0bb398e](https://github.com/RonTamG/pyapt/commit/0bb398e010397c0a8fdec509e4fe06d5f6d1eff5))
+
+
+
 ## [1.8.1](https://github.com/RonTamG/pyapt/compare/v1.8.0...v1.8.1) (2024-02-06)
 
 
@@ -84,23 +93,6 @@
 
 * package dependency collection now ignores missing recommended packages ([42eb2b3](https://github.com/RonTamG/pyapt/commit/42eb2b366cf3899a163af526b87b50546ba94cfd))
 * removed deletion of provides field in virtual package addition ([2f5cda4](https://github.com/RonTamG/pyapt/commit/2f5cda4070e4eae56f00d4d95a74e2f114b3f8b4))
-
-
-
-# [1.6.0](https://github.com/RonTamG/pyapt/compare/v1.5.1...v1.6.0) (2023-09-13)
-
-
-### Bug Fixes
-
-* added run permissions to owner of install file in generated tar.gz file ([a5711ca](https://github.com/RonTamG/pyapt/commit/a5711ca17686763b019a1a5e5d98232d1871b646))
-* progress bar correctly removes overflowing lines ([bcc0283](https://github.com/RonTamG/pyapt/commit/bcc02837ae11493b0a1af71526a151cd0ebc0e9f))
-
-
-### Features
-
-* added error message on missing sources list file ([57d9317](https://github.com/RonTamG/pyapt/commit/57d9317b85e318f4f88f7c83cd733583e7a52dda))
-* changed user agent to debian apt ([0c84d07](https://github.com/RonTamG/pyapt/commit/0c84d0797674cb6b0ce74a9fa3efa759805bbfb5))
-* fix added ansi escape character support in windows console ([9cf8b1b](https://github.com/RonTamG/pyapt/commit/9cf8b1b4573ffa513b914d423cf10b0b9b126ca3))
 
 
 
