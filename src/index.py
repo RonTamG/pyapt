@@ -1,6 +1,6 @@
 import re
 from operator import itemgetter
-from typing import Dict
+from typing import Dict, Optional
 
 from src.package import Package
 from src.version import Version
@@ -33,7 +33,7 @@ class Index:
 
         return self
 
-    def search(self, name) -> Package | None:
+    def search(self, name) -> Optional[Package]:
         pattern = r"([^\s:]+)(?::(\S+))?(?: \((<<|<=|=|>=|>>) (\S+)\))?"
         result = None
 
