@@ -34,11 +34,12 @@ class Index:
         return self
 
     def search(self, name) -> Package | None:
-        pattern = r"(\S+)(?: \((<<|<=|=|>=|>>) (\S+)\))?"
+        pattern = r"([^\s:]+)(?::(\S+))?(?: \((<<|<=|=|>=|>>) (\S+)\))?"
         result = None
 
         if (match := re.match(pattern, name)) is not None:
-            package, operation, target_version = match.groups()
+            # here we ignore the architecture
+            package, _, operation, target_version = match.groups()
 
             if (package_versions := self.packages.get(package, None)) is not None:
                 if operation is None:

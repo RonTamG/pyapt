@@ -120,6 +120,14 @@ def test_should_be_combinable_with_other_indexes():
     assert index.search("ca-certificates") is not None
 
 
+def test_should_ignore_architecture_qualifier_if_exists():
+    index = valid_index()
+
+    assert index.search("python3:any") is not None
+    assert index.search("python3:amd64") is not None
+    assert index.search("python3:arm64") is not None
+
+
 def test_should_check_if_package_is_contained_in_list():
     index = valid_index()
 
