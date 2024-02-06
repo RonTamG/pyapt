@@ -163,6 +163,13 @@ def test_should_get_package_dependencies_should_fail_when_package_is_missing():
         raise AssertionError("Expected KeyError but action completed successfully")
 
 
+def test_should_set_provided_package_version_if_included():
+    index = Index(valid_index_file_with_virtual_packages())
+
+    index.search("python3-supported-max (= 3.11)").version == Version("3.11")
+    index.search("python3-supported-max").version == Version("3.11")
+
+
 def valid_index_file():
     return """Package: python3
 Source: python3-defaults (3.11.4-5)

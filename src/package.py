@@ -5,8 +5,15 @@ from src.version import Version
 
 
 def _into_virtual_package(self, name, package_data):
-    name, *_ = name.split(" ")  # ignoring the version of the virtual package
+    name, version = re.match(
+        r"(?P<name>\S+)(?: \(= (?P<version>\S+)\))?", name
+    ).groups()
+
     package_data = package_data.replace(f"Package: {self.name}", f"Package: {name}")
+    if version is not None:
+        package_data = package_data.replace(
+            f"Version: {self.version}", f"Version: {version}"
+        )
 
     return Package(package_data)
 

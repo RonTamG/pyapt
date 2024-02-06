@@ -146,6 +146,16 @@ def test_package_without_provides_field_should_have_empty_provides_list():
     assert len(package.provides) == 0
 
 
+def test_provided_packages_should_include_version_if_specified():
+    package = Package(valid_package_data_with_provides_field())
+    # Provides: python3-profiler, python3-supported-max (= 3.11), python3-supported-min (= 3.11)
+    profiler, supported_max, supported_min = package.provides
+
+    assert profiler.version == Version("3.11.4-5+b1")
+    assert supported_max.version == Version("3.11")
+    assert supported_min.version == Version("3.11")
+
+
 def test_package_should_return_to_original_string():
     data = valid_package_data()
 
