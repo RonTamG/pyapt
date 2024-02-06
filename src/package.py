@@ -1,3 +1,4 @@
+import posixpath
 import re
 
 from src.version import Version
@@ -48,6 +49,11 @@ class Package:
 
         self.apt_source = None
         self.all_fields = values
+
+    @property
+    def download_url(self):
+        uri, *_ = self.apt_source.split()
+        return posixpath.join(uri, self.all_fields["Filename"])
 
     def __repr__(self) -> str:
         return f"{self.name} ({self.version})"

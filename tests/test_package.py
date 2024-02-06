@@ -103,6 +103,16 @@ def test_new_package_should_have_a_none_apt_source_field():
     assert package.apt_source is None
 
 
+def test_should_have_download_url_field():
+    package = Package(valid_package_data())
+    package.apt_source = "http://deb.debian.org/debian bullseye/main amd64"
+
+    assert (
+        package.download_url
+        == "http://deb.debian.org/debian/./python3_3.11.4-5+b1_amd64.deb"
+    )
+
+
 def test_should_be_compareable_by_name():
     package_1 = Package(valid_package_data())
     package_2 = Package(valid_package_data_with_different_name())
