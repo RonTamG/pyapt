@@ -61,7 +61,7 @@ def get_cursor_position():
     return (-1, -1)
 
 
-def progressbar(it, count, prefix="", size=60):  # Python3.6+
+def progressbar(it, count, prefix="", size=60, with_item=True):  # Python3.6+
     """
     displays a progress bar for an iterator
 
@@ -78,7 +78,9 @@ def progressbar(it, count, prefix="", size=60):  # Python3.6+
         print(CLEAR, end="", flush=True)
 
         filled = int(size * current / count)
-        line = f"{prefix}[{'#' * filled}{('.' * (size - filled))}] {current}/{count} [{item}]"  # noqa: E501
+        line = f"{prefix}[{'#' * filled}{('.' * (size - filled))}] {current}/{count}"  # noqa: E501
+        if with_item:
+            line += f" [{item}]"
         print(line, end="", flush=True)
 
         return len(line)
