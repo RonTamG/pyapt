@@ -35,7 +35,7 @@ code = sys.stdin.read()
 modules_to_remove = [
     "src.index",
     "src.package",
-    "src.progressbar",
+    "src.progress_bar",
     "src.version",
     "src.sources_list",
     "src.file_manager",
