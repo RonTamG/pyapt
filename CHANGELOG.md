@@ -1,3 +1,20 @@
+# [1.9.0](https://github.com/RonTamG/pyapt/compare/v1.8.2...v1.9.0) (2024-02-07)
+
+
+### Bug Fixes
+
+* missing match check in virtual package name parsing ([4fcbe06](https://github.com/RonTamG/pyapt/commit/4fcbe060903b6a37e97d2b9891e60b82ccd18cfd))
+* version int upstream compare fillvalue was string instead of int ([54d80e6](https://github.com/RonTamG/pyapt/commit/54d80e630df711c83bb4fc69b87137ddbb99a867))
+
+
+### Features
+
+* added saving index to --keep ([71f0205](https://github.com/RonTamG/pyapt/commit/71f0205889145593ce661be53a0f42f9a6bfcb39))
+* added support for alternative dependencies in index search ([9e0a62d](https://github.com/RonTamG/pyapt/commit/9e0a62df59f295f152cc87bad45dff86a8100e67))
+* added version handling for virtual packages ([aad680e](https://github.com/RonTamG/pyapt/commit/aad680e868ed629f9e906f323752b2c09c5f386d))
+
+
+
 ## [1.8.2](https://github.com/RonTamG/pyapt/compare/v1.8.1...v1.8.2) (2024-02-06)
 
 
@@ -83,16 +100,6 @@
 
 * added -y option for install script to auto accept apt install command ([3a6f192](https://github.com/RonTamG/pyapt/commit/3a6f1927a9c0ec43755ab91e477bac33553b4eb2))
 * added option to remove progress bar ([859eba1](https://github.com/RonTamG/pyapt/commit/859eba1b6dcef941ede9fa0121443b5ab95f94b7))
-
-
-
-## [1.6.1](https://github.com/RonTamG/pyapt/compare/v1.6.0...v1.6.1) (2023-11-11)
-
-
-### Bug Fixes
-
-* package dependency collection now ignores missing recommended packages ([42eb2b3](https://github.com/RonTamG/pyapt/commit/42eb2b366cf3899a163af526b87b50546ba94cfd))
-* removed deletion of provides field in virtual package addition ([2f5cda4](https://github.com/RonTamG/pyapt/commit/2f5cda4070e4eae56f00d4d95a74e2f114b3f8b4))
 
 
 
