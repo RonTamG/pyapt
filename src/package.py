@@ -5,9 +5,12 @@ from src.version import Version
 
 
 def _into_virtual_package(self, name, package_data):
-    name, version = re.match(
-        r"(?P<name>\S+)(?: \(= (?P<version>\S+)\))?", name
-    ).groups()
+    pattern = re.compile(r"(?P<name>\S+)(?: \(= (?P<version>\S+)\))?")
+    result = re.match(pattern, name)
+    if result is None:
+        raise AssertionError(f'failed to match "{name}" as virtual package name')
+
+    name, version = result.groups()
 
     package_data = package_data.replace(f"Package: {self.name}", f"Package: {name}")
     if version is not None:
