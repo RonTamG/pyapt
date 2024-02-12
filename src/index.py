@@ -97,9 +97,6 @@ class Index:
         if packages is None:
             packages = []
 
-        if current.priority in ["required", "important"]:
-            return None
-
         if current in packages:
             return None
         else:

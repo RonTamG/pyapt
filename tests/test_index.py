@@ -149,7 +149,7 @@ def test_should_get_package_dependencies():
 
     packages = index.get_package_dependencies("python3")
 
-    assert len(packages) == 33
+    assert len(packages) == 43
 
 
 def test_should_get_package_dependencies_with_recommended():
@@ -157,7 +157,7 @@ def test_should_get_package_dependencies_with_recommended():
 
     packages = index.get_package_dependencies("python3", with_recommended=True)
 
-    assert len(packages) == 43
+    assert len(packages) == 104
 
 
 def test_should_get_package_dependencies_should_fail_when_package_is_missing():
