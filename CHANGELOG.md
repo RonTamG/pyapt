@@ -1,3 +1,17 @@
+# [1.10.0](https://github.com/RonTamG/pyapt/compare/v1.9.0...v1.10.0) (2024-02-12)
+
+
+### Bug Fixes
+
+* added downloading of packages with required and important priority ([aa84d97](https://github.com/RonTamG/pyapt/commit/aa84d97100cbcbefa82b51f1eabdc39e8f243979))
+
+
+### Features
+
+* changed name of inner folder of output tar to be name of tar instead of temp folder name ([ba93cfa](https://github.com/RonTamG/pyapt/commit/ba93cfa0bf90b56805922f58e2aef85d3ae9769f))
+
+
+
 # [1.9.0](https://github.com/RonTamG/pyapt/compare/v1.8.2...v1.9.0) (2024-02-07)
 
 
@@ -85,21 +99,6 @@
 * hash function for version ([b53f45b](https://github.com/RonTamG/pyapt/commit/b53f45b334a69e498a1e3b1be2eb265624d99c43))
 * index search ignores architecture qualifier ([12fbbff](https://github.com/RonTamG/pyapt/commit/12fbbff8732931ac233c4705bfce80aa49d85a9b))
 * set return value of set_package_apt_source method of index to self ([89a8e4b](https://github.com/RonTamG/pyapt/commit/89a8e4b4d055eac8e743264a979e2579890ce202))
-
-
-
-# [1.7.0](https://github.com/RonTamG/pyapt/compare/v1.6.1...v1.7.0) (2023-11-11)
-
-
-### Bug Fixes
-
-* installs script now works in directories with spaces in name ([971e305](https://github.com/RonTamG/pyapt/commit/971e3053e05c12d63b521021859f78e649a1f2e6))
-
-
-### Features
-
-* added -y option for install script to auto accept apt install command ([3a6f192](https://github.com/RonTamG/pyapt/commit/3a6f1927a9c0ec43755ab91e477bac33553b4eb2))
-* added option to remove progress bar ([859eba1](https://github.com/RonTamG/pyapt/commit/859eba1b6dcef941ede9fa0121443b5ab95f94b7))
 
 
 
