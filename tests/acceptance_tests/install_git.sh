@@ -16,7 +16,7 @@ python main.py --sources-list /etc/apt/sources.list $remove_progress_bar git
 tar -xvf git.tar.gz
 
 # run the install script
-cd temp_apt
+cd git
 
 ./install.sh -y
 

@@ -36,9 +36,11 @@ def tar_dir(path, name):
         tarinfo.mode = 0o755
         return tarinfo
 
-    with tarfile.open(name, "w:gz") as tar:
-        tar.add(Path(path, "packages"))
-        tar.add(Path(path, "install.sh"), filter=set_permissions)
+    with tarfile.open(name + ".tar.gz", "w:gz") as tar:
+        tar.add(Path(path, "packages"), Path(name, "packages"))
+        tar.add(
+            Path(path, "install.sh"), Path(name, "install.sh"), filter=set_permissions
+        )
 
 
 def apt_update(sources_list_path, enable_progress_bar=True):
@@ -187,7 +189,7 @@ def main():
         generate_packages_index_file(packages, temp_folder)
         write_install_script(name, temp_folder)
         index_dump_path.unlink(missing_ok=True)
-        tar_dir(temp_folder, f"{name}.tar.gz")
+        tar_dir(temp_folder, name)
 
     if not args.keep:
         shutil.rmtree(temp_folder)
